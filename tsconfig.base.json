@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "es2023",
+    "lib": ["ES2023"],
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "moduleDetection": "force",
+    "skipLibCheck": true,
+    "noEmit": true,
+
+    /* Strictness */
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+
+    /* Keep TypeScript-only syntax out, so tsx and Vite can strip types safely */
+    "verbatimModuleSyntax": true,
+    "erasableSyntaxOnly": true
+  }
+}
