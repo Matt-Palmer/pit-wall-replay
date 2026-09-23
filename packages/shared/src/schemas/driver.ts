@@ -14,4 +14,7 @@ export const driverSchema = z.object({
   team_name: z.string(),
 });
 
+export const driversSchema = z.array(driverSchema);
+
 export type Driver = z.infer<typeof driverSchema>;
+export type Drivers = z.infer<typeof driversSchema>;

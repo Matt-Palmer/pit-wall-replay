@@ -1,7 +1,7 @@
 import express from "express";
 import { z } from "zod";
 import type { HealthResponse } from "@pitwall/shared";
-import { lapsSchema, sessionsSchema } from "@pitwall/shared";
+import { lapsSchema, sessionsSchema, driversSchema } from "@pitwall/shared";
 import { cached } from "./lib/cache";
 import { fetchJson } from "./lib/helpers";
 import { sessionIdParamsSchema, yearParamsSchema } from "./lib/params";
@@ -26,7 +26,35 @@ app.get("/api/sessions/:year", async (req, res) => {
   res.json(sessions);
 });
 
-app.get("/api/sessions/:id/laps", async (req, res) => {
+app.get("/api/session/:id", async (req, res) => {
+  const parsed = sessionIdParamsSchema.safeParse(req.params);
+  if (!parsed.success) {
+    res.status(400).json({ error: z.prettifyError(parsed.error) });
+    return;
+  }
+
+  const { id } = parsed.data;
+
+  const session = await cached(`session:${id}`, CACHE_TTL, () => fetchJson("sessions", { session_key: id }, sessionsSchema));
+  res.json(session);
+});
+
+app.get("/api/session/:id/drivers", async (req, res) => {
+	const parsed = sessionIdParamsSchema.safeParse(req.params);
+	if (!parsed.success) {
+		res.status(400).json({ error: z.prettifyError(parsed.error) });
+		return;
+	}
+
+	const { id } = parsed.data;
+
+	const session = await cached(`session-drivers:${id}`, CACHE_TTL, () =>
+		fetchJson("drivers", { session_key: id }, driversSchema),
+	);
+	res.json(session);
+});
+
+app.get("/api/session/:id/laps", async (req, res) => {
   const parsed = sessionIdParamsSchema.safeParse(req.params);
   if (!parsed.success) {
     res.status(400).json({ error: z.prettifyError(parsed.error) });

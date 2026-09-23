@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { Driver } from "./driver";
 
 const nullableNumber = z.number().nullable();
 const segmentsSectorSchema = z.array(nullableNumber).nullable();
@@ -25,4 +26,5 @@ export const lapSchema = z.object({
 export const lapsSchema = z.array(lapSchema);
 
 export type Lap = z.infer<typeof lapSchema>;
+export type LapWithDriver = Lap & { driver: Driver | undefined };
 export type Laps = z.infer<typeof lapsSchema>;

@@ -1,0 +1,23 @@
+.driver-card {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  color: inherit;
+  border: 1px solid var(--team-colour);
+  border-radius: 8px;
+  flex: 1;
+}
+
+.driver-card:hover {
+  background-color: rgb(from var(--team-colour) r g b / 0.3);
+}
+
+.driver-card .driver-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  text-align: right;
+  flex: 1;
+  padding: 0.5rem;
+}
