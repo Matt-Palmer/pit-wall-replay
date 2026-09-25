@@ -8,3 +8,6 @@ export * from "./schemas/lap";
 export * from "./schemas/session";
 export * from "./schemas/pit-stop";
 export * from "./schemas/driver";
+export * from "./schemas/position";
+export * from "./schemas/intervals";
+export * from "./schemas/session-result";

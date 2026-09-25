@@ -8,7 +8,8 @@ const MAX_STORE_SIZE = 100;
 const store = new Map<string, Entry>();
 const inflight = new Map<string, Promise<unknown>>();
 
-export async function cached<T>(key: string, ttl: number, load: () => Promise<T>): Promise<T> {
+// ttl can depend on the loaded value, e.g. to hold an empty result only briefly
+export async function cached<T>(key: string, ttl: number | ((value: T) => number), load: () => Promise<T>): Promise<T> {
   const hit = getCache<T>(key);
   if (hit !== undefined) {
     return hit;
@@ -20,7 +21,7 @@ export async function cached<T>(key: string, ttl: number, load: () => Promise<T>
   }
 
   const promise = load().then(result => {
-    setCache(key, result, ttl);
+    setCache(key, result, typeof ttl === "function" ? ttl(result) : ttl);
     return result;
   }).finally(() => {
     inflight.delete(key);

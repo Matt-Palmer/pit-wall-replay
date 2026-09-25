@@ -1,57 +1,40 @@
-import { skipToken, useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
+import { useSessionTimeline } from '../hooks/useSessionTimeline';
+import { standingAt } from '../lib/timeline';
+import { useMemo, useState } from 'react';
+import { RaceScrubber } from '../components/RaceScrubber';
 
-import { fetchSessionDrivers } from '../lib/queries';
-import LapsPanel from '../components/LapsPanel';
+import DriverList from '../components/Driver/DriverList';
 
 import '../styles/driversPanel.css';
 
 function Session() {
   const { sessionKey } = useParams();
 
-  const { data: drivers, error: queryError, isLoading } = useQuery({
-    queryKey: ['session', 'drivers', sessionKey],
-    queryFn: sessionKey ? ({ signal }) => fetchSessionDrivers(sessionKey, signal) : skipToken,
-    staleTime: 1000 * 60 * 5, // 5 minutes
-  });
+  const { timeline, drivers, isLoading, error } = useSessionTimeline(sessionKey);
+
+	const [raceTimeMs, setRaceTimeMs] = useState(0);
+
+	const driversMap = useMemo(() => new Map(drivers?.map(driver => [driver.driver_number, driver])), [drivers]);
+
+	const standings = useMemo(() => (timeline ? standingAt(timeline, driversMap, timeline.start + raceTimeMs) : []), [timeline, driversMap, raceTimeMs]);
+
+	const leaderLap = standings.find(s => s.position === 1)?.lap || 0;
+	const totalLaps = timeline?.leaderLapStarts.length || 0;
 
   return (
 		<div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-			{isLoading && <p>Loading...</p>}
-			{queryError && <p>Error: {String(queryError)}</p>}
-			<ul
-				style={{
-					listStyleType: "none",
-					padding: 0,
-					display: "grid",
-					gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
-					gap: "1rem",
-				}}
-			>
-				{drivers?.map((driver) => (
-					<li key={driver.driver_number}>
-						<a
-							href={`/drivers/${driver.driver_number}`}
-							className="driver-card"
-							style={
-								{
-									"--team-colour": `#${driver.team_colour}`,
-								} as React.CSSProperties
-							}
-						>
-							<img src={driver.headshot_url ?? ""} alt={driver.full_name} />
-							<div className="driver-info">
-								<p style={{ fontSize: "1.5rem" }}>{driver.driver_number}</p>
-								<p>{driver.first_name}</p>
-								<p style={{ fontSize: "1.5rem" }}>
-									{driver.last_name.toUpperCase()}
-								</p>
-							</div>
-						</a>
-					</li>
-				)) ?? <p>No session data available.</p>}
-			</ul>
-			<LapsPanel sessionKey={sessionKey} />
+			{isLoading && <div>Loading...</div>}
+			{error && <div>Error: {error.message}</div>}
+			<RaceScrubber
+				timeMs={raceTimeMs}
+				onTimeChange={setRaceTimeMs}
+				leaderLapStarts={totalLaps}
+				leaderLap={leaderLap}
+				start={timeline?.start || 0}
+				end={timeline?.end || 0}
+			/>
+			{!isLoading && !error && <DriverList standings={standings} leaderLap={leaderLap} totalLaps={totalLaps} />}
 		</div>
 	);
 }
