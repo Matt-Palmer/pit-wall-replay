@@ -1,0 +1,44 @@
+.position-chart {
+  flex: 1;
+  min-width: 0;
+}
+
+.position-chart__tooltip {
+  padding: 6px 10px;
+  background: rgba(20, 20, 20, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+  color: #fff;
+  font-size: 12px;
+}
+
+.position-chart-d3 {
+  position: relative;
+}
+
+.position-chart-d3__grid line {
+  stroke: currentColor;
+  stroke-opacity: 0.15;
+}
+
+.position-chart-d3__axis text {
+  fill: currentColor;
+  fill-opacity: 0.7;
+  font-size: 12px;
+}
+
+.position-chart-d3__series {
+  transition: opacity 150ms;
+}
+
+.position-chart-d3__end-label {
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.position-chart-d3__tooltip {
+  position: absolute;
+  transform: translate(-50%, calc(-100% - 12px));
+  pointer-events: none;
+  white-space: nowrap;
+}

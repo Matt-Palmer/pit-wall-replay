@@ -1,4 +1,5 @@
 import { sessionsSchema } from '../../../shared/src/schemas/session';
+import { meetingsSchema } from '../../../shared/src/schemas/meeting';
 import { driversSchema } from '../../../shared/src/schemas/driver';
 import { lapsSchema } from '../../../shared/src/schemas/lap';
 import { positionsSchema } from '../../../shared/src/schemas/position';
@@ -34,6 +35,22 @@ export async function fetchSession(sessionKey: string, signal?: AbortSignal) {
 		});
 
 	return parsedData.data;
+}
+
+export async function fetchMeeting(meetingKey: number, signal?: AbortSignal) {
+  const res = await fetch(`/api/meeting/${meetingKey}`, { signal })
+
+  if (!res.ok) throw new ApiError('Failed to fetch meeting', res.status);
+  
+  const data = await res.json()
+  const parsedData = meetingsSchema.safeParse(data);
+
+  if (!parsedData.success)
+    throw new ApiError("Invalid meeting response", undefined, {
+      cause: parsedData.error,
+    });
+
+  return parsedData.data[0];
 }
 
 export async function fetchSessionDrivers(sessionKey: string, signal?: AbortSignal) {

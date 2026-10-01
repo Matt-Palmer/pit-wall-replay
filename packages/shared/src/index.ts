@@ -11,3 +11,4 @@ export * from "./schemas/driver";
 export * from "./schemas/position";
 export * from "./schemas/intervals";
 export * from "./schemas/session-result";
+export * from "./schemas/meeting";

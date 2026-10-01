@@ -7,11 +7,21 @@ import { RaceScrubber } from '../components/RaceScrubber';
 import DriverList from '../components/Driver/DriverList';
 
 import '../styles/driversPanel.css';
+import PositionPerLapD3 from '../components/Charts/PositionPerLapD3';
+import { useMeeting } from '../hooks/useMeeting';
+import { useSession } from '../hooks/useSession';
+import { SessionHeader } from '../components/SessionHeader/SessionHeader';
+import { SessionHeaderSkeleton } from '../components/SessionHeader/SessionHeaderSkeleton';
+import { RaceScrubberSkeleton } from '../components/RaceScrubberSkeleton';
+import DriverListSkeleton from '../components/Driver/DriverListSkeleton';
+import PositionPerLapSkeleton from '../components/Charts/PositionPerLapSkeleton';
 
 function Session() {
   const { sessionKey } = useParams();
 
+	const { session } = useSession(sessionKey);
   const { timeline, drivers, isLoading, error } = useSessionTimeline(sessionKey);
+	const { meeting, isLoading: isMeetingLoading, error: meetingError } = useMeeting(session?.meeting_key); 
 
 	const [raceTimeMs, setRaceTimeMs] = useState(0);
 
@@ -24,17 +34,49 @@ function Session() {
 
   return (
 		<div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-			{isLoading && <div>Loading...</div>}
+			{meeting ? (
+				<SessionHeader meeting={meeting} />
+			) : meetingError ? (
+				<div>Error loading meeting: {meetingError.message}</div>
+			) : (
+				<SessionHeaderSkeleton />
+			)}
+
 			{error && <div>Error: {error.message}</div>}
-			<RaceScrubber
-				timeMs={raceTimeMs}
-				onTimeChange={setRaceTimeMs}
-				leaderLapStarts={totalLaps}
-				leaderLap={leaderLap}
-				start={timeline?.start || 0}
-				end={timeline?.end || 0}
-			/>
-			{!isLoading && !error && <DriverList standings={standings} leaderLap={leaderLap} totalLaps={totalLaps} />}
+			{isLoading ? (
+				<RaceScrubberSkeleton />
+			) : (
+				<RaceScrubber
+					timeMs={raceTimeMs}
+					onTimeChange={setRaceTimeMs}
+					leaderLapStarts={totalLaps}
+					leaderLap={leaderLap}
+					start={timeline?.start || 0}
+					end={timeline?.end || 0}
+				/>
+			)}
+			<div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+				{isLoading ? (
+					<DriverListSkeleton />
+				) : !error && (
+					<DriverList
+						standings={standings}
+						leaderLap={leaderLap}
+						totalLaps={totalLaps}
+					/>
+				)}
+
+				{isLoading ? (
+					<PositionPerLapSkeleton />
+				) : timeline && (
+					<PositionPerLapD3
+						timeline={timeline}
+						driversMap={driversMap}
+						t={timeline.start + raceTimeMs}
+						totalLaps={totalLaps}
+					/>
+				)}
+			</div>
 		</div>
 	);
 }

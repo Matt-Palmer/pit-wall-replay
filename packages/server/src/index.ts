@@ -1,7 +1,7 @@
 import express from "express";
 import { z } from "zod";
 import type { HealthResponse } from "@pitwall/shared";
-import { lapsSchema, sessionsSchema, driversSchema, positionsSchema, intervalsSchema, stintsSchema, sessionResultsSchema } from "@pitwall/shared";
+import { lapsSchema, sessionsSchema, driversSchema, positionsSchema, intervalsSchema, stintsSchema, sessionResultsSchema, meetingsSchema } from "@pitwall/shared";
 import { cached } from "./lib/cache";
 import { fetchJson } from "./lib/helpers";
 import { sessionIdParamsSchema, yearParamsSchema } from "./lib/params";
@@ -26,6 +26,19 @@ app.get("/api/sessions/:year", async (req, res) => {
 
   const sessions = await cached(`sessions:${year}`, CACHE_TTL, () => fetchJson('sessions', { year, session_name: 'Race' }, sessionsSchema));
   res.json(sessions);
+});
+
+app.get("/api/meeting/:id", async (req, res) => {
+  const parsed = sessionIdParamsSchema.safeParse(req.params);
+  if (!parsed.success) {
+    res.status(400).json({ error: z.prettifyError(parsed.error) });
+    return;
+  }
+
+  const { id } = parsed.data;
+
+  const meeting = await cached(`meeting:${id}`, CACHE_TTL, () => fetchJson("meetings", { meeting_key: id }, meetingsSchema));
+  res.json(meeting);
 });
 
 app.get("/api/session/:id", async (req, res) => {

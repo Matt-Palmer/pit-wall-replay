@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 import { skipToken, useQuery } from '@tanstack/react-query';
 import { 
-  fetchSession,
   fetchSessionDrivers,
   fetchSessionLaps,
   fetchSessionPositions,
@@ -9,9 +8,8 @@ import {
   fetchSessionIntervals,
   fetchSessionResult
 } from '../lib/queries';
+import { useSession } from './useSession';
 
-import type { Session } from '../../../shared/src/schemas/session';
-import type { Driver } from '../../../shared/src/schemas/driver';
 import type { Lap } from '../../../shared/src/schemas/lap';
 import type { Position } from '../../../shared/src/schemas/position';
 import type { Stint } from '../../../shared/src/schemas/stint';
@@ -41,11 +39,8 @@ export function useSessionTimeline(sessionKey: string | undefined) {
   // Hook logic here
   const common = { staleTime: Infinity, enabled: Boolean(sessionKey) };
 
-  const sessionQuery = useQuery({
-    queryKey: ['session', sessionKey],
-    queryFn: sessionKey ? ({ signal }) => fetchSession(sessionKey, signal) : skipToken,
-    ...common
-  });
+  const sessionQuery = useSession(sessionKey);
+  const session = sessionQuery.session;
 
   const lapsQuery = useQuery({
     queryKey: ['session', 'laps', sessionKey],
@@ -83,7 +78,6 @@ export function useSessionTimeline(sessionKey: string | undefined) {
     ...common
   });
 
-  const session = sessionQuery.data?.[0];
   const laps = lapsQuery.data;
   const positions = positionsQuery.data;
   const stints = stintsQuery.data;

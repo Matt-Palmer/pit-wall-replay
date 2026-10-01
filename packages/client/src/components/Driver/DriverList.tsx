@@ -14,7 +14,6 @@ const DISPLAYED_DATA_OPTIONS: Record<string, string> = {
 };
 
 function DriverList({ standings, leaderLap, totalLaps }: DriverListProps) {
-
 	const [displayedData, setDisplayedData] = useState('interval');
 
 	function onNextDisplayedData() {
