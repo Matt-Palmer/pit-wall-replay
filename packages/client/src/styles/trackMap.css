@@ -1,0 +1,49 @@
+/* Fills the map cell, which is sized by the grid rather than by the SVG */
+.track-map {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.track-map__track {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.35);
+  stroke-width: 6px;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.track-map__car circle {
+  fill: var(--team-colour);
+  stroke: #111;
+  stroke-width: 1px;
+  vector-effect: non-scaling-stroke;
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 120ms;
+}
+
+.track-map__car--highlighted {
+  pointer-events: none;
+}
+
+.track-map__car--highlighted circle {
+  stroke: #e10600;
+  stroke-width: 3px;
+  transform: scale(1.4);
+}
+
+.track-map__car text {
+  fill: #fff;
+  font-weight: 700;
+  paint-order: stroke;
+  stroke: #111;
+  stroke-width: 3px;
+  vector-effect: non-scaling-stroke;
+}
+
+.track-map-skeleton {
+  position: absolute;
+  inset: 0;
+}

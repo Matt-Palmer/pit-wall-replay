@@ -1,0 +1,45 @@
+.session {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.session-grid {
+  display: grid;
+  grid-template-columns: 300px repeat(4, 1fr);
+  grid-template-rows: repeat(5, 1fr) auto;
+  grid-template-areas:
+    "drivers map    map    map    map"
+    "drivers map    map    map    map"
+    "drivers map    map    map    map"
+    "drivers table1 table1 table2 table2"
+    "drivers table1 table1 table2 table2"
+    "lap     lap    lap    lap    lap";
+  gap: 1rem;
+}
+
+/* Stop large images/charts from stretching their grid cell */
+.session-grid > * {
+  min-width: 0;
+  min-height: 0;
+}
+
+.session-grid__drivers { grid-area: drivers; }
+.session-grid__map     { grid-area: map; }
+.session-grid__table1  { grid-area: table1; }
+.session-grid__table2  { grid-area: table2; }
+.session-grid__lap     { grid-area: lap; }
+
+/* Map fills the space left above the scrubber */
+.session-grid__map {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Map is taken out of flow so it fills the space without affecting row height */
+.session-grid__map-image {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}

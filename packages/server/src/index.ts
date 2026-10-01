@@ -1,14 +1,18 @@
 import express from "express";
 import { z } from "zod";
-import type { HealthResponse } from "@pitwall/shared";
-import { lapsSchema, sessionsSchema, driversSchema, positionsSchema, intervalsSchema, stintsSchema, sessionResultsSchema, meetingsSchema } from "@pitwall/shared";
+import type { HealthResponse, SessionLocations } from "@pitwall/shared";
+import { lapsSchema, sessionsSchema, driversSchema, positionsSchema, intervalsSchema, stintsSchema, sessionResultsSchema, meetingsSchema, locationsSchema } from "@pitwall/shared";
 import { cached } from "./lib/cache";
 import { fetchJson } from "./lib/helpers";
+import { downsample, fastestLapTrack, mapWithConcurrency } from "./lib/locations";
 import { sessionIdParamsSchema, yearParamsSchema } from "./lib/params";
 
 const CACHE_TTL = 1000 * 60 * 60; // 1 hour
 // Results are empty until a session is classified, so check again soon
 const EMPTY_RESULT_TTL = 1000 * 60; // 1 minute
+// Car positions are sent at about 1 Hz, matching the scrubber step; the client interpolates between them
+const LOCATION_SAMPLE_MS = 1000;
+const LOCATION_FETCH_CONCURRENCY = 4;
 
 const app = express();
 const port = 3000;
@@ -54,6 +58,13 @@ app.get("/api/session/:id", async (req, res) => {
   res.json(session);
 });
 
+// Shared by their own routes and the locations route
+const loadDrivers = (id: number) =>
+	cached(`session-drivers:${id}`, CACHE_TTL, () => fetchJson("drivers", { session_key: id }, driversSchema));
+
+const loadLaps = (id: number) =>
+	cached(`laps:${id}`, CACHE_TTL, () => fetchJson("laps", { session_key: id }, lapsSchema));
+
 app.get("/api/session/:id/drivers", async (req, res) => {
 	const parsed = sessionIdParamsSchema.safeParse(req.params);
 	if (!parsed.success) {
@@ -63,9 +74,7 @@ app.get("/api/session/:id/drivers", async (req, res) => {
 
 	const { id } = parsed.data;
 
-	const session = await cached(`session-drivers:${id}`, CACHE_TTL, () =>
-		fetchJson("drivers", { session_key: id }, driversSchema),
-	);
+	const session = await loadDrivers(id);
 	res.json(session);
 });
 
@@ -78,8 +87,36 @@ app.get("/api/session/:id/laps", async (req, res) => {
 
   const { id } = parsed.data;
 
-  const laps = await cached(`laps:${id}`, CACHE_TTL, () => fetchJson("laps", { session_key: id }, lapsSchema));
+  const laps = await loadLaps(id);
   res.json(laps);
+});
+
+app.get("/api/session/:id/locations", async (req, res) => {
+  const parsed = sessionIdParamsSchema.safeParse(req.params);
+  if (!parsed.success) {
+    res.status(400).json({ error: z.prettifyError(parsed.error) });
+    return;
+  }
+
+  const { id } = parsed.data;
+
+  const locations = await cached(`locations:${id}`, CACHE_TTL, async (): Promise<SessionLocations> => {
+    const [drivers, laps] = await Promise.all([loadDrivers(id), loadLaps(id)]);
+
+    // A whole session in one request is too large for OpenF1, so fetch a driver at a time
+    const rows = await mapWithConcurrency(drivers, LOCATION_FETCH_CONCURRENCY, (driver) =>
+      fetchJson("location", { session_key: id, driver_number: driver.driver_number }, locationsSchema, { emptyOnNotFound: true }),
+    );
+    const rowsByDriver = new Map(drivers.map((driver, i) => [driver.driver_number, rows[i] ?? []]));
+
+    const cars: SessionLocations["cars"] = {};
+    for (const [driverNumber, driverRows] of rowsByDriver) {
+      if (driverRows.length) cars[driverNumber] = downsample(driverRows, LOCATION_SAMPLE_MS);
+    }
+
+    return { track: fastestLapTrack(laps, rowsByDriver), cars };
+  });
+  res.json(locations);
 });
 
 app.get("/api/session/:id/positions", async (req, res) => {

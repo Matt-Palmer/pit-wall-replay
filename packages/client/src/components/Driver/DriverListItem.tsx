@@ -17,7 +17,14 @@ function setTyreCompoundColour(compound: string | undefined) {
 	}
 }
 
-function DriverListItem({ row, displayedData }: { row: StandingRow; displayedData: string }) {
+type DriverListItemProps = {
+	row: StandingRow;
+	displayedData: string;
+	highlighted: boolean;
+	onHover: (driverNumber: number | null) => void;
+};
+
+function DriverListItem({ row, displayedData, highlighted, onHover }: DriverListItemProps) {
 
 	function formatGapOrInterval(value: string | number | null | undefined) {
 		if (row.outAt !== undefined) return "Out";
@@ -30,7 +37,9 @@ function DriverListItem({ row, displayedData }: { row: StandingRow; displayedDat
 		<li key={row.driverNumber}>
 			<a
 				href={`/drivers/${row.driverNumber}`}
-				className="driver-list-item"
+				className={highlighted ? "driver-list-item is-highlighted" : "driver-list-item"}
+				onPointerEnter={() => onHover(row.driverNumber)}
+				onPointerLeave={() => onHover(null)}
 				style={
 					{
 						"--team-colour": `#${row.driver?.team_colour}`,

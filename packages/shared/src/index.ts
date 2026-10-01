@@ -12,3 +12,4 @@ export * from "./schemas/position";
 export * from "./schemas/intervals";
 export * from "./schemas/session-result";
 export * from "./schemas/meeting";
+export * from "./schemas/location";

@@ -7,6 +7,7 @@ import { stintsSchema } from '../../../shared/src/schemas/stint';
 import { ApiError } from './helpers';
 import { intervalsSchema } from '../../../shared/src/schemas/intervals';
 import { sessionResultsSchema } from '../../../shared/src/schemas/session-result';
+import { sessionLocationsSchema } from '../../../shared/src/schemas/location';
 
 export async function fetchSessions(year: string, signal?: AbortSignal) {
   const res = await fetch(`/api/sessions/${year}`, { signal })
@@ -127,6 +128,19 @@ export async function fetchSessionResult(sessionKey: string, signal?: AbortSigna
   const parsedData = sessionResultsSchema.safeParse(data)
 
   if (!parsedData.success) throw new ApiError('Invalid session result response', undefined, { cause: parsedData.error });
+
+  return parsedData.data;
+}
+
+export async function fetchSessionLocations(sessionKey: string, signal?: AbortSignal) {
+  const res = await fetch(`/api/session/${sessionKey}/locations`, { signal })
+
+  if (!res.ok) throw new ApiError('Failed to fetch session locations', res.status);
+
+  const data = await res.json()
+  const parsedData = sessionLocationsSchema.safeParse(data)
+
+  if (!parsedData.success) throw new ApiError('Invalid session locations response', undefined, { cause: parsedData.error });
 
   return parsedData.data;
 }

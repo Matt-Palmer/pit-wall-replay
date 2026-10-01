@@ -1,5 +1,6 @@
 import type { Driver } from '../../../shared/src/schemas/driver';
 import type { TyreCompound } from '../../../shared/src/compounds';
+import type { CarTrack } from '../../../shared/src/schemas/location';
 import type { SessionTimeline } from '../hooks/useSessionTimeline';
 
 export type StandingRow = {
@@ -44,6 +45,58 @@ export function latestAtOrBefore<T extends { t: number }>(sorted: T[], target: n
   }
 
   return result;
+}
+
+// Number of laps the leader has started by time t (0 before the first lap starts).
+export function leaderLapAt(leaderLapStarts: number[], t: number): number {
+  let low = 0;
+  let high = leaderLapStarts.length;
+
+  // Find the first index whose start time is after t; that index is the count of laps started.
+  while (low < high) {
+    const mid = Math.floor((low + high) / 2);
+    if (leaderLapStarts[mid]! <= t) {
+      low = mid + 1;
+    } else {
+      high = mid;
+    }
+  }
+
+  return low;
+}
+
+// Beyond this gap between samples the car is held at its last point rather than slid across the map
+const MAX_INTERPOLATION_GAP_MS = 5000;
+
+// Where a car is at time t, interpolated between location samples. Undefined once the car has stopped running.
+export function carPositionAt(car: CarTrack, t: number, stoppedAt?: number): { x: number; y: number } | undefined {
+  if (car.t.length === 0) return undefined;
+  if (stoppedAt !== undefined && t >= stoppedAt) return undefined;
+
+  // Index of the last sample at or before t, or -1 if t is before the first sample
+  let low = 0;
+  let high = car.t.length - 1;
+  let i = -1;
+  while (low <= high) {
+    const mid = Math.floor((low + high) / 2);
+    if (car.t[mid]! <= t) {
+      i = mid;
+      low = mid + 1;
+    } else {
+      high = mid - 1;
+    }
+  }
+
+  // Before the first sample the car is on the grid
+  if (i === -1) return { x: car.x[0]!, y: car.y[0]! };
+
+  const x0 = car.x[i]!;
+  const y0 = car.y[i]!;
+  const t1 = car.t[i + 1];
+  if (t1 === undefined || t1 - car.t[i]! > MAX_INTERPOLATION_GAP_MS) return { x: x0, y: y0 };
+
+  const ratio = (t - car.t[i]!) / (t1 - car.t[i]!);
+  return { x: x0 + (car.x[i + 1]! - x0) * ratio, y: y0 + (car.y[i + 1]! - y0) * ratio };
 }
 
 export function standingAt(timeline: SessionTimeline, driversMap: Map<number, Driver>, t: number): StandingRow[] {

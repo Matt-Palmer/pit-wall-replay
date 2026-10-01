@@ -6,6 +6,8 @@ interface DriverListProps {
 	standings: StandingRow[];
 	leaderLap: number;
 	totalLaps: number
+	hoveredDriver: number | null;
+	onHoverDriver: (driverNumber: number | null) => void;
 }
 
 const DISPLAYED_DATA_OPTIONS: Record<string, string> = {
@@ -13,7 +15,7 @@ const DISPLAYED_DATA_OPTIONS: Record<string, string> = {
 	gapToLeader: 'Gap to Leader',
 };
 
-function DriverList({ standings, leaderLap, totalLaps }: DriverListProps) {
+function DriverList({ standings, leaderLap, totalLaps, hoveredDriver, onHoverDriver }: DriverListProps) {
 	const [displayedData, setDisplayedData] = useState('interval');
 
 	function onNextDisplayedData() {
@@ -49,7 +51,13 @@ function DriverList({ standings, leaderLap, totalLaps }: DriverListProps) {
 				className="driver-list"
 				>
 				{standings.map((standing) => (
-					<DriverListItem key={standing.driverNumber} row={standing} displayedData={displayedData} />
+					<DriverListItem
+							key={standing.driverNumber}
+							row={standing}
+							displayedData={displayedData}
+							highlighted={standing.driverNumber === hoveredDriver}
+							onHover={onHoverDriver}
+						/>
 				))}
 			</ul>
 		</div>
