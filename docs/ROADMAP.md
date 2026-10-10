@@ -2,7 +2,7 @@
 
 Status as of 2026-10-10. Tick boxes as tasks are completed.
 
-**Current step:** 0.1e, commit the typecheck fix.
+**Current step:** 0.2f, commit the timeline fix.
 
 ---
 
@@ -39,7 +39,7 @@ Status as of 2026-10-10. Tick boxes as tasks are completed.
 
 ### Bugs and loose ends
 
-1. ~~**Client typecheck fails**: unused `isMeetingLoading` in `Session.tsx`~~ (fixed, not yet committed)
+1. ~~**Client typecheck fails**: unused `isMeetingLoading` in `Session.tsx`~~ (fixed in e6dc0f9)
 2. **Unnecessary recalculation in `useSessionTimeline.ts`**: if the result query fails, `result = []` is a new array every render, so the timeline is rebuilt every frame during playback
 3. **Broken driver links**: `DriverListItem` links to `/drivers/N`, which doesn't match `/race/:sessionKey/driver/:driverNumber`. It's also a plain `<a>`, so clicking it reloads the page and loses playback position
 4. **Conflicting tyre colours**: `DriverListItem` has its own colour switch, which doesn't match the unused `constants/compounds.ts`
@@ -92,15 +92,15 @@ Each task is a single change you can check before moving on.
 - [x] **b.** Decide whether `isMeetingLoading` should be used or removed, by looking at how `Session.tsx` decides when to show `SessionHeaderSkeleton`. *Decision:* removed; the header already shows the skeleton whenever there's no meeting and no error
 - [x] **c.** Make the change. *Done when:* `npm run typecheck` passes for all three packages
 - [x] **d.** Run `npm run build -w packages/client`. *Done when:* the Vite build succeeds
-- [ ] **e.** Commit. One small commit with just this change. Pick a conventional-commit prefix (`feat:` doesn't fit) and a message under about 60 characters
+- [x] **e.** Commit. One small commit with just this change. Pick a conventional-commit prefix (`feat:` doesn't fit) and a message under about 60 characters
 
 ### 0.2 Stop the timeline rebuilding on every render
 
-- [ ] **a.** Open `client/src/hooks/useSessionTimeline.ts` and find where `result` is assigned (the line with `isError ? [] : ...`)
-- [ ] **b.** Work out why `[]` breaks `useMemo`: how does React compare dependencies? *Done when:* you can explain it in one sentence
-- [ ] **c.** Look at how `Session.tsx` avoids the same problem with `NO_LAPS`
-- [ ] **d.** Apply that pattern here
-- [ ] **e.** Run `npx oxlint` in `packages/client`. *Done when:* the `exhaustive-deps` warning on `result` is gone
+- [x] **a.** Open `client/src/hooks/useSessionTimeline.ts` and find where `result` is assigned (the line with `isError ? [] : ...`)
+- [x] **b.** Work out why `[]` breaks `useMemo`: how does React compare dependencies? *Done when:* you can explain it in one sentence
+- [x] **c.** Look at how `Session.tsx` avoids the same problem with `NO_LAPS`
+- [x] **d.** Apply that pattern here
+- [x] **e.** Run `npx oxlint` in `packages/client`. *Done when:* the `exhaustive-deps` warning on `result` is gone
 - [ ] **f.** Commit
 
 ### 0.3 One source of tyre colours
