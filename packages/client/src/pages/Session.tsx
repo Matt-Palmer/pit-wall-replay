@@ -32,7 +32,7 @@ function Session() {
 
 	const { session } = useSession(sessionKey);
   const { timeline, drivers, isLoading, error } = useSessionTimeline(sessionKey);
-	const { meeting, isLoading: isMeetingLoading, error: meetingError } = useMeeting(session?.meeting_key); 
+	const { meeting, error: meetingError } = useMeeting(session?.meeting_key); 
 
 	const { locations, isLoading: isLocationsLoading, error: locationsError } = useSessionLocations(sessionKey);
 
