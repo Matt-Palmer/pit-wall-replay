@@ -5,11 +5,12 @@ const ROW_COUNT = 20;
 function DriverListSkeleton() {
   return (
 		<div className="driver-list-container" aria-busy="true" aria-label="Loading drivers">
-			<div style={{ display: "flex", justifyContent: "center" }}>
-				<Skeleton width="4rem" height="1.4rem" />
+			<div className="driver-list__header">
+				<Skeleton width="5rem" height="1.2rem" />
+				<Skeleton width="4rem" height="1.2rem" />
 			</div>
-			<div style={{ display: "flex", justifyContent: "center", marginBottom: "1rem" }}>
-				<Skeleton width="8rem" />
+			<div className="driver-list__toggle">
+				<Skeleton width="10rem" height="2rem" />
 			</div>
 			<ul className="driver-list">
 				{Array.from({ length: ROW_COUNT }, (_, i) => (

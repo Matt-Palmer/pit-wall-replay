@@ -41,11 +41,20 @@ function DriverList({ standings, leaderLap, totalLaps, hoveredDriver, onHoverDri
 
   return (
 		<div className="driver-list-container">
-			<h3 style={{ textAlign: "center" }}>{leaderLap} / {totalLaps}</h3>
-			<div style={{ textAlign: "center", marginBottom: "1rem" }}>
-				<span onClick={onPreviousDisplayedData}>&lt;</span>
-				<span style={{ margin: "0 1rem" }}>{DISPLAYED_DATA_OPTIONS[displayedData]}</span>
-				<span onClick={onNextDisplayedData}>&gt;</span>
+			<div className="driver-list__header">
+				<h2 className="panel__title">Timing</h2>
+				<p className="driver-list__lap">
+					<span>Lap </span>{leaderLap}<span>/{totalLaps}</span>
+				</p>
+			</div>
+			<div className="driver-list__toggle">
+				<button type="button" onClick={onPreviousDisplayedData} aria-label="Previous column">
+					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>
+				</button>
+				<span aria-live="polite">{DISPLAYED_DATA_OPTIONS[displayedData]} · Tyre</span>
+				<button type="button" onClick={onNextDisplayedData} aria-label="Next column">
+					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
+				</button>
 			</div>
 			<ul
 				className="driver-list"

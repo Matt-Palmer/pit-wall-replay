@@ -1,12 +1,13 @@
 .session {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 16px;
+  padding: 16px 24px 24px;
 }
 
 .session-grid {
   display: grid;
-  grid-template-columns: 300px repeat(4, 1fr);
+  grid-template-columns: 340px repeat(4, 1fr);
   grid-template-rows: repeat(5, 1fr) auto;
   grid-template-areas:
     "drivers map    map    map    map"
@@ -15,7 +16,7 @@
     "drivers table1 table1 table2 table2"
     "drivers table1 table1 table2 table2"
     "lap     lap    lap    lap    lap";
-  gap: 1rem;
+  gap: 16px;
 }
 
 /* Stop large images/charts from stretching their grid cell */
@@ -30,11 +31,15 @@
 .session-grid__table2  { grid-area: table2; }
 .session-grid__lap     { grid-area: lap; }
 
-/* Map fills the space left above the scrubber */
+/* Map panel: fills the space left above the scrubber */
 .session-grid__map {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 12px;
+  padding: 16px;
+  background: var(--pw-panel);
+  border: 1px solid var(--pw-border);
+  border-radius: var(--pw-radius-lg);
 }
 
 /* Map is taken out of flow so it fills the space without affecting row height */
@@ -42,4 +47,11 @@
   position: relative;
   flex: 1;
   min-height: 0;
+}
+
+.session-grid__lap {
+  padding: 16px;
+  background: var(--pw-panel);
+  border: 1px solid var(--pw-border);
+  border-radius: var(--pw-radius-lg);
 }

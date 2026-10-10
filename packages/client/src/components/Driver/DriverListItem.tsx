@@ -3,15 +3,15 @@ import type { StandingRow } from "../../lib/timeline";
 function setTyreCompoundColour(compound: string | undefined) {
 	switch (compound?.toLowerCase()) {
 		case 'soft':
-			return '#ff4c4c';
+			return '#E8384F';
 		case 'medium':
-			return '#ffe11c';
+			return '#F5D33F';
 		case 'hard':
-			return '#f4f4f4';
+			return '#E6EAEE';
 		case 'intermediate':
-			return '#00ff00';
+			return '#43D17A';
 		case 'wet':
-			return '#0000ff';
+			return '#4D8BFF';
 		default:
 			return '#cccccc';
 	}
@@ -46,26 +46,25 @@ function DriverListItem({ row, displayedData, highlighted, onHover }: DriverList
 					} as React.CSSProperties
 				}
 			>
-				<p style={{ width: "2rem" }}>{row.position}</p>
-				<p style={{ fontSize: "1.2rem", width: "4rem" }}>
+				<span className="driver-list-item__position">{row.position}</span>
+				<span className="driver-list-item__team" aria-hidden="true" />
+				<span className="driver-list-item__code">
 					{row.driver?.name_acronym}
-				</p>
+				</span>
 
-				<div style={{flex: 1, textAlign: "center"}}>
-					{displayedData === "gapToLeader" && (
-						<p>{formatGapOrInterval(row.gapToLeader)}</p>
-					)}
-					{displayedData === "interval" && (
-						<p>{formatGapOrInterval(row.interval)}</p>
-					)}
-				</div>
+				<span className="driver-list-item__gap">
+					{displayedData === "gapToLeader" && formatGapOrInterval(row.gapToLeader)}
+					{displayedData === "interval" && formatGapOrInterval(row.interval)}
+				</span>
 
-				<p
-					className="tyre-compound"
-					style={{ color: setTyreCompoundColour(row.compound), width: "2rem", textAlign: "center" }}
+				<span
+					className="tyre-pill"
+					style={{ "--tyre-colour": setTyreCompoundColour(row.compound) } as React.CSSProperties}
+					title={row.compound}
 				>
 					{row.compound?.charAt(0)}
-				</p>
+				</span>
+				<span className="driver-list-item__age" title="Tyre age (laps)">{row.tyreAge ?? ''}</span>
 			</a>
 		</li>
 	);

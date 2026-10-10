@@ -20,6 +20,12 @@ import PositionPerLapSkeleton from '../components/Charts/PositionPerLapSkeleton'
 import TrackMap from '../components/TrackMap/TrackMap';
 import { Skeleton } from '../components/Skeleton/Skeleton';
 import { useSessionLocations } from '../hooks/useSessionLocations';
+import { usePlayback } from '../hooks/usePlayback';
+import { TelemetryPanel } from '../components/TelemetryPanel/TelemetryPanel';
+import { RaceControl } from '../components/RaceControl/RaceControl';
+
+// Shared so the fallback keeps the same identity between renders
+const NO_LAPS: number[] = [];
 
 function Session() {
   const { sessionKey } = useParams();
@@ -30,9 +36,15 @@ function Session() {
 
 	const { locations, isLoading: isLocationsLoading, error: locationsError } = useSessionLocations(sessionKey);
 
-	const [raceTimeMs, setRaceTimeMs] = useState(0);
 	// The time under the scrubber while it is being dragged; only the map follows it live
 	const [scrubMs, setScrubMs] = useState<number | null>(null);
+	const playback = usePlayback({
+		leaderLapStarts: timeline?.leaderLapStarts ?? NO_LAPS,
+		start: timeline?.start ?? 0,
+		end: timeline?.end ?? 0,
+		suspended: scrubMs !== null,
+	});
+	const raceTimeMs = playback.timeMs;
 	const mapTimeMs = scrubMs ?? raceTimeMs;
 	const [hoveredDriver, setHoveredDriver] = useState<number | null>(null);
 
@@ -94,21 +106,30 @@ function Session() {
 					) : (
 						<RaceScrubber
 							timeMs={raceTimeMs}
-							onTimeChange={setRaceTimeMs}
+							onTimeChange={playback.seek}
 							onScrub={setScrubMs}
-							leaderLapStarts={timeline?.leaderLapStarts ?? []}
+							leaderLapStarts={timeline?.leaderLapStarts ?? NO_LAPS}
 							start={timeline?.start || 0}
 							end={timeline?.end || 0}
+							playback={playback.state}
+							onTogglePlay={playback.togglePlay}
+							onSpeed={playback.setSpeed}
+							onHold={playback.hold}
+							onRelease={playback.release}
+							onNextLap={playback.nextLap}
+							onPrevLap={playback.prevLap}
 						/>
 					)}
 				</div>
 
 				<div className="session-grid__table1">
-					{/* TODO: data table */}
+					{/* TODO: wire up to the hovered/selected driver */}
+					<TelemetryPanel />
 				</div>
 
 				<div className="session-grid__table2">
-					{/* TODO: data table */}
+					{/* TODO: wire up to race control messages */}
+					<RaceControl />
 				</div>
 
 				<div className="session-grid__lap">

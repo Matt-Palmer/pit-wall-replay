@@ -1,0 +1,40 @@
+/* Pit Wall design tokens: every colour, font and radius in the app should come from here */
+:root {
+  /* Surfaces */
+  --pw-bg: #0B0E12;
+  --pw-bg-raised: #0E1217;
+  --pw-panel: #12171D;
+  --pw-panel-hover: #1A212A;
+  --pw-border: #222A33;
+  --pw-track: #2A333D;
+
+  /* Text */
+  --pw-text: #E6EAEE;
+  --pw-text-muted: #8A95A1;
+  --pw-text-on-accent: #0B0E12;
+
+  /* Accent (amber) */
+  --pw-accent: #FFB020;
+  --pw-accent-soft: #FFC95C;
+  --pw-accent-bg: #1E1A0E;
+  --pw-accent-border: #3A2F12;
+  --pw-accent-glow: rgb(255 176 32 / 0.25);
+
+  /* Sectors and status */
+  --pw-sector-1: #3FC8FF;
+  --pw-sector-2: #B48CFF;
+  --pw-sector-3: #FFB020;
+  --pw-positive: #5BE38A;
+  --pw-negative: #FF5A5F;
+
+  /* Type */
+  --pw-font-body: 'Barlow', system-ui, sans-serif;
+  --pw-font-display: 'Barlow Condensed', 'Barlow', sans-serif;
+  --pw-font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  /* Shape */
+  --pw-radius-sm: 4px;
+  --pw-radius: 6px;
+  --pw-radius-lg: 8px;
+  --pw-target: 44px;
+}

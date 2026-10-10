@@ -1,0 +1,38 @@
+.race-control {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+  padding: 14px 16px;
+}
+
+.race-control__list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  list-style: none;
+  overflow-y: auto;
+}
+
+.race-control__item {
+  display: flex;
+  gap: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--pw-border);
+  font-size: 14px;
+}
+
+.race-control__item:last-child {
+  border-bottom: none;
+}
+
+.race-control__lap {
+  width: 44px;
+  flex-shrink: 0;
+  font-family: var(--pw-font-mono);
+  color: var(--pw-text-muted);
+}
+
+.race-control__text.is-yellow {
+  color: var(--pw-accent-soft);
+}

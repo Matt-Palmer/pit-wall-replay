@@ -14,6 +14,7 @@ export function SessionHeader({ meeting }: { meeting: Meeting }) {
       </div>
       <div className="session-header__right">
         <p className="session-header__date">{format(new Date(meeting.date_start), 'PPP')} - {format(new Date(meeting.date_end), 'PPP')}</p>
+        <span className="session-header__badge">Replay</span>
       </div>
     </header>
   );

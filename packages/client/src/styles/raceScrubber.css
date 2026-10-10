@@ -1,4 +1,116 @@
+.race-scrubber {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
 .race-scrubber__input {
   width: 100%;
-  accent-color: #e10600;
+  accent-color: var(--pw-accent);
 }
+
+/* Label, transport and speeds; the outer columns share the space so the transport stays centred */
+.race-scrubber__controls {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.race-scrubber__label {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.race-scrubber__transport,
+.race-scrubber__speeds {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.race-scrubber__speeds {
+  justify-self: end;
+}
+
+.race-scrubber button {
+  min-width: 2.5rem;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--pw-border);
+  border-radius: 4px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  /* Stops a long press selecting text or opening a menu on touch screens */
+  user-select: none;
+  touch-action: none;
+}
+
+.race-scrubber button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.race-scrubber__play {
+  min-width: 3rem;
+}
+
+.race-scrubber__speeds button[aria-pressed='true'] {
+  border-color: var(--pw-text);
+  background: var(--pw-text);
+  color: var(--pw-bg);
+  font-weight: 700;
+}
+
+/* Pit wall theme */
+.race-scrubber__label {
+  font-family: var(--pw-font-mono);
+  font-size: 13px;
+  color: var(--pw-text-muted);
+}
+
+.race-scrubber button {
+  min-height: var(--pw-target);
+  background: var(--pw-bg-raised);
+  font-family: var(--pw-font-mono);
+  font-size: 13px;
+}
+
+.race-scrubber button:not(:disabled):hover {
+  background: var(--pw-panel-hover);
+}
+
+.race-scrubber .race-scrubber__play {
+  width: 52px;
+  height: 52px;
+  border: none;
+  border-radius: 50%;
+  background: var(--pw-accent);
+  color: var(--pw-text-on-accent);
+  font-size: 16px;
+}
+
+.race-scrubber .race-scrubber__play:not(:disabled):hover {
+  background: var(--pw-accent-soft);
+}
+
+.race-scrubber__transport {
+  align-items: center;
+  gap: 8px;
+}
+
+.race-scrubber__speeds {
+  padding: 4px;
+  background: var(--pw-panel);
+  border: 1px solid var(--pw-border);
+  border-radius: var(--pw-radius);
+}
+
+.race-scrubber__speeds button {
+  min-height: 36px;
+  border-color: transparent;
+  background: transparent;
+  color: var(--pw-text-muted);
+}
+

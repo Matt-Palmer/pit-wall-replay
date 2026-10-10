@@ -48,53 +48,63 @@ function TrackMap({ locations, driversMap, stoppedAt, t, hoveredDriver, onHoverD
     };
   }, [track, locations.cars]);
 
-  const cars = useMemo(() => {
+  const { cars, hasMissingCars } = useMemo(() => {
     const result: Car[] = [];
+    // Cars still running but without location data at t, as opposed to cars that have stopped
+    let missing = 0;
     for (const [key, car] of Object.entries(locations.cars)) {
       const driverNumber = Number(key);
-      const position = carPositionAt(car, t, stoppedAt.get(driverNumber));
-      if (!position) continue;
+      const carStoppedAt = stoppedAt.get(driverNumber);
+      const position = carPositionAt(car, t, carStoppedAt);
+      if (!position) {
+        if (carStoppedAt === undefined || t < carStoppedAt) missing++;
+        continue;
+      }
       const [x, y] = toPoint(position.x, position.y);
       result.push({ driverNumber, driver: driversMap.get(driverNumber), x, y });
     }
-    return result;
+    return { cars: result, hasMissingCars: missing > 0 };
   }, [locations.cars, t, stoppedAt, driversMap]);
 
   const hoveredCar = cars.find((car) => car.driverNumber === hoveredDriver);
 
   return (
-    <svg className="track-map" viewBox={viewBox} role="img" aria-label="Car positions on the circuit">
-      {path && <path className="track-map__track" d={path} />}
+    <>
+      <svg className="track-map" viewBox={viewBox} role="img" aria-label="Car positions on the circuit">
+        {path && <path className="track-map__track" d={path} />}
 
-      {cars.map((car) => (
-        <g
-          key={car.driverNumber}
-          className="track-map__car"
-          transform={`translate(${car.x} ${car.y})`}
-          style={{ '--team-colour': `#${car.driver?.team_colour ?? 'cccccc'}` } as React.CSSProperties}
-          onPointerEnter={() => onHoverDriver(car.driverNumber)}
-          onPointerLeave={() => onHoverDriver(null)}
-        >
-          <title>{car.driver?.full_name ?? car.driverNumber}</title>
-          <circle r={radius} />
-        </g>
-      ))}
+        {cars.map((car) => (
+          <g
+            key={car.driverNumber}
+            className="track-map__car"
+            transform={`translate(${car.x} ${car.y})`}
+            style={{ '--team-colour': `#${car.driver?.team_colour ?? 'cccccc'}` } as React.CSSProperties}
+            onPointerEnter={() => onHoverDriver(car.driverNumber)}
+            onPointerLeave={() => onHoverDriver(null)}
+          >
+            <title>{car.driver?.full_name ?? car.driverNumber}</title>
+            <circle r={radius} />
+          </g>
+        ))}
 
-      {/* Drawn again on top of the rest; a copy rather than reordering, so the pointer target never moves in the DOM */}
-      {hoveredCar && (
-        <g
-          className="track-map__car track-map__car--highlighted"
-          transform={`translate(${hoveredCar.x} ${hoveredCar.y})`}
-          style={{ '--team-colour': `#${hoveredCar.driver?.team_colour ?? 'cccccc'}` } as React.CSSProperties}
-          aria-hidden="true"
-        >
-          <circle r={radius} />
-          <text x={radius * 2} y={radius * 0.6} fontSize={radius * 2.2}>
-            {hoveredCar.driver?.name_acronym ?? hoveredCar.driverNumber}
-          </text>
-        </g>
-      )}
-    </svg>
+        {/* Drawn again on top of the rest; a copy rather than reordering, so the pointer target never moves in the DOM */}
+        {hoveredCar && (
+          <g
+            className="track-map__car track-map__car--highlighted"
+            transform={`translate(${hoveredCar.x} ${hoveredCar.y})`}
+            style={{ '--team-colour': `#${hoveredCar.driver?.team_colour ?? 'cccccc'}` } as React.CSSProperties}
+            aria-hidden="true"
+          >
+            <circle r={radius} />
+            <text x={radius * 2} y={radius * 0.6} fontSize={radius * 2.2}>
+              {hoveredCar.driver?.name_acronym ?? hoveredCar.driverNumber}
+            </text>
+          </g>
+        )}
+      </svg>
+
+      {cars.length === 0 && hasMissingCars && <div className="track-map__notice">No location data at this point</div>}
+    </>
   );
 }
 

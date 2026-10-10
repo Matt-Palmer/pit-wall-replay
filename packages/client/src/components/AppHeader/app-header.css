@@ -1,0 +1,53 @@
+.app-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 32px;
+  padding: 14px 24px;
+  background: var(--pw-bg-raised);
+  border-bottom: 1px solid var(--pw-border);
+}
+
+.app-header__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--pw-accent);
+  text-decoration: none;
+}
+
+.app-header__wordmark {
+  font-family: var(--pw-font-display);
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--pw-text);
+}
+
+.app-header__wordmark span {
+  color: var(--pw-accent);
+}
+
+.app-header__nav {
+  display: flex;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.app-header__nav a {
+  padding: 10px 14px;
+  border-radius: var(--pw-radius);
+  color: var(--pw-text-muted);
+  text-decoration: none;
+}
+
+.app-header__nav a:hover {
+  color: var(--pw-text);
+}
+
+.app-header__nav a.active {
+  background: var(--pw-panel-hover);
+  color: var(--pw-text);
+  font-weight: 600;
+}

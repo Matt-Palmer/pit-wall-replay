@@ -2,6 +2,13 @@ import type { CarTrack, Lap, Location, SessionLocations } from "@pitwall/shared"
 
 // A clean lap with fewer samples than this is treated as missing data
 const MIN_TRACK_POINTS = 20;
+// A lap with a longer hole than this, including at either end, would draw a chord across the circuit
+const MAX_TRACK_GAP_MS = 2000;
+
+// OpenF1 sends samples at the origin when it has no position for the car
+export function hasPosition(row: Location): boolean {
+  return row.x !== 0 || row.y !== 0 || row.z !== 0;
+}
 
 // Keeps the first sample in each bucketMs window, as parallel arrays in time order.
 export function downsample(rows: Location[], bucketMs: number): CarTrack {
@@ -40,12 +47,22 @@ export function fastestLapTrack(laps: Lap[], rowsByDriver: Map<number, Location[
       .filter((sample) => sample.t >= start && sample.t <= end)
       .sort((a, b) => a.t - b.t);
 
-    if (samples.length >= MIN_TRACK_POINTS) {
+    if (samples.length >= MIN_TRACK_POINTS && coversWindow(samples.map((s) => s.t), start, end)) {
       return { x: samples.map((s) => s.x), y: samples.map((s) => s.y) };
     }
   }
 
   return { x: [], y: [] };
+}
+
+// Whether sorted sample times leave no hole longer than MAX_TRACK_GAP_MS between start and end
+function coversWindow(times: number[], start: number, end: number): boolean {
+  let previous = start;
+  for (const t of [...times, end]) {
+    if (t - previous > MAX_TRACK_GAP_MS) return false;
+    previous = t;
+  }
+  return true;
 }
 
 // Runs fn over items with at most `limit` calls in flight, keeping the input order.

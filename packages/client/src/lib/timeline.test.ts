@@ -28,6 +28,17 @@ describe('carPositionAt', () => {
     expect(carPositionAt(car, 20000)).toEqual({ x: 500, y: 500 });
   });
 
+  it('hides the car more than 30 s into a gap in the data', () => {
+    const gappy = { t: [1000, 2000, 100_000], x: [0, 100, 500], y: [0, -50, 500] };
+    expect(carPositionAt(gappy, 32_000)).toEqual({ x: 100, y: -50 });
+    expect(carPositionAt(gappy, 32_001)).toBeUndefined();
+    expect(carPositionAt(gappy, 100_000)).toEqual({ x: 500, y: 500 });
+  });
+
+  it('hides the car more than 30 s after the data ends', () => {
+    expect(carPositionAt(car, 40_001)).toBeUndefined();
+  });
+
   it('hides the car once it has stopped running', () => {
     expect(carPositionAt(car, 1999, 2000)).toBeDefined();
     expect(carPositionAt(car, 2000, 2000)).toBeUndefined();

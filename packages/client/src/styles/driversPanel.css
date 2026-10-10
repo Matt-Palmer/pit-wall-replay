@@ -1,34 +1,121 @@
 .driver-list-container {
   display: flex;
   flex-direction: column;
-  list-style-type: none;
+  gap: 8px;
   width: 100%;
-  box-sizing: border-box;
-  border: 1px solid #cccccc28;
-  padding: 0.5rem;
-  border-radius: 8px;
-  gap: 0.3rem;
+  padding: 14px 8px 8px;
+  background: var(--pw-panel);
+  border: 1px solid var(--pw-border);
+  border-radius: var(--pw-radius-lg);
+}
+
+.driver-list__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 0 8px;
+}
+
+.driver-list__lap {
+  font-family: var(--pw-font-mono);
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.driver-list__lap span {
+  color: var(--pw-text-muted);
+}
+
+/* Interval / gap to leader switcher */
+.driver-list__toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0 4px 4px;
+  border-bottom: 1px solid var(--pw-border);
+  font-size: 13px;
+  color: var(--pw-text-muted);
+}
+
+.driver-list__toggle button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--pw-border);
+  border-radius: var(--pw-radius-sm);
+  background: transparent;
+  color: var(--pw-text);
+  cursor: pointer;
+}
+
+.driver-list__toggle button:hover {
+  background: var(--pw-panel-hover);
 }
 
 .driver-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
   list-style-type: none;
-  padding: 0;
-  margin: 0;
 }
 
 .driver-list-item {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.3rem 0.5rem;
-  text-decoration: none;
+  gap: 10px;
+  min-height: 40px;
+  padding: 4px 10px;
+  border: 1px solid transparent;
+  border-radius: var(--pw-radius);
   color: inherit;
-  border-left: 3px solid var(--team-colour);
-  flex: 1;
-  border-radius: 0 4px 4px 0;
+  text-decoration: none;
 }
 
 .driver-list-item:hover,
 .driver-list-item.is-highlighted {
-  background-color: rgb(from var(--team-colour) r g b / 0.3);
+  background-color: var(--pw-panel-hover);
+  border-color: var(--pw-accent);
+}
+
+.driver-list-item__position {
+  width: 22px;
+  text-align: right;
+  font-family: var(--pw-font-mono);
+  font-weight: 700;
+  color: var(--pw-text-muted);
+}
+
+.driver-list-item__team {
+  width: 4px;
+  height: 22px;
+  border-radius: 2px;
+  background: var(--team-colour);
+  flex-shrink: 0;
+}
+
+.driver-list-item__code {
+  width: 44px;
+  font-family: var(--pw-font-display);
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: 0.04em;
+}
+
+.driver-list-item__gap {
+  flex: 1;
+  text-align: right;
+  font-family: var(--pw-font-mono);
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+.driver-list-item__age {
+  width: 22px;
+  text-align: right;
+  font-family: var(--pw-font-mono);
+  font-size: 12px;
+  color: var(--pw-text-muted);
 }

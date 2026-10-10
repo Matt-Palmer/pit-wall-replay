@@ -67,8 +67,11 @@ export function leaderLapAt(leaderLapStarts: number[], t: number): number {
 
 // Beyond this gap between samples the car is held at its last point rather than slid across the map
 const MAX_INTERPOLATION_GAP_MS = 5000;
+// Held any longer than this, the data is missing rather than paused, so the car is hidden
+const MAX_HOLD_MS = 30_000;
 
-// Where a car is at time t, interpolated between location samples. Undefined once the car has stopped running.
+// Where a car is at time t, interpolated between location samples.
+// Undefined once the car has stopped running, or when it has no sample in the last MAX_HOLD_MS.
 export function carPositionAt(car: CarTrack, t: number, stoppedAt?: number): { x: number; y: number } | undefined {
   if (car.t.length === 0) return undefined;
   if (stoppedAt !== undefined && t >= stoppedAt) return undefined;
@@ -89,6 +92,8 @@ export function carPositionAt(car: CarTrack, t: number, stoppedAt?: number): { x
 
   // Before the first sample the car is on the grid
   if (i === -1) return { x: car.x[0]!, y: car.y[0]! };
+
+  if (t - car.t[i]! > MAX_HOLD_MS) return undefined;
 
   const x0 = car.x[i]!;
   const y0 = car.y[i]!;

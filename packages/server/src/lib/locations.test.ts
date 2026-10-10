@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { Lap, Location } from "@pitwall/shared";
-import { downsample, fastestLapTrack, mapWithConcurrency } from "./locations";
+import { downsample, fastestLapTrack, hasPosition, mapWithConcurrency } from "./locations";
 
 const BASE = Date.parse("2025-01-01T00:00:00Z");
 
@@ -41,6 +41,18 @@ describe("downsample", () => {
   });
 });
 
+describe("hasPosition", () => {
+  it("rejects OpenF1's placeholder samples at the origin", () => {
+    expect(hasPosition(location(0, 0, 0))).toBe(false);
+  });
+
+  it("keeps a sample with any non-zero axis", () => {
+    expect(hasPosition(location(0, 5, 0))).toBe(true);
+    expect(hasPosition(location(0, 0, 5))).toBe(true);
+    expect(hasPosition({ ...location(0, 0, 0), z: 5 })).toBe(true);
+  });
+});
+
 describe("fastestLapTrack", () => {
   // Driver 1 has a sample every 100 ms for 200 s, with x equal to the time in ms
   const rows = Array.from({ length: 2000 }, (_, i) => location(i * 100, i * 100));
@@ -73,6 +85,20 @@ describe("fastestLapTrack", () => {
       lap({ driver_number: 1, date_start: new Date(BASE + 10_000).toISOString(), lap_duration: 20 }),
     ];
     expect(fastestLapTrack(laps, rowsByDriver).x[0]).toBe(10_000);
+  });
+
+  it("skips a lap with a hole in its samples", () => {
+    // Samples stop at 200 s, so this lap's window runs past the end of the data
+    const gappyRows = rows.filter((row) => {
+      const ms = Date.parse(row.date) - BASE;
+      return ms < 30_000 || ms > 35_000;
+    });
+    const laps = [
+      lap({ lap_number: 2, date_start: new Date(BASE + 20_000).toISOString(), lap_duration: 20 }),
+      lap({ lap_number: 3, date_start: new Date(BASE + 190_000).toISOString(), lap_duration: 15 }),
+      lap({ lap_number: 4, date_start: new Date(BASE + 60_000).toISOString(), lap_duration: 30 }),
+    ];
+    expect(fastestLapTrack(laps, new Map([[1, gappyRows]])).x[0]).toBe(60_000);
   });
 
   it("returns an empty track when no lap qualifies", () => {

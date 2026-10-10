@@ -1,0 +1,177 @@
+.telemetry {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  height: 100%;
+  padding: 16px;
+}
+
+.telemetry__driver {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.telemetry__team {
+  width: 6px;
+  height: 40px;
+  border-radius: 3px;
+  background: var(--team-colour);
+}
+
+.telemetry__code {
+  font-family: var(--pw-font-display);
+  font-weight: 700;
+  font-size: 30px;
+  line-height: 1;
+  letter-spacing: 0.04em;
+}
+
+.telemetry__meta {
+  font-size: 13px;
+  color: var(--pw-text-muted);
+}
+
+.telemetry__title {
+  margin-left: auto;
+}
+
+.telemetry__stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.telemetry__stat {
+  padding: 12px;
+  background: var(--pw-bg-raised);
+  border-radius: var(--pw-radius);
+}
+
+.telemetry__label {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--pw-text-muted);
+}
+
+.telemetry__value {
+  font-family: var(--pw-font-mono);
+  font-weight: 700;
+  font-size: 30px;
+}
+
+.telemetry__value span {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--pw-text-muted);
+}
+
+.telemetry__gear {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.telemetry__drs {
+  padding: 3px 8px;
+  border-radius: var(--pw-radius-sm);
+  background: var(--pw-border);
+  color: var(--pw-text-muted);
+  font-family: var(--pw-font-display);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.08em;
+}
+
+.telemetry__drs.is-open {
+  background: var(--pw-positive);
+  color: var(--pw-text-on-accent);
+}
+
+.telemetry__pedals {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.telemetry__pedal {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.telemetry__pedal .telemetry__label {
+  width: 72px;
+}
+
+.telemetry__bar {
+  flex: 1;
+  height: 10px;
+  overflow: hidden;
+  background: var(--pw-bg-raised);
+  border-radius: 2px;
+}
+
+.telemetry__bar-fill {
+  height: 100%;
+}
+
+.telemetry__bar-fill--throttle { background: var(--pw-positive); }
+.telemetry__bar-fill--brake    { background: var(--pw-negative); }
+
+.telemetry__pct {
+  width: 40px;
+  text-align: right;
+  font-family: var(--pw-font-mono);
+  font-size: 13px;
+}
+
+.telemetry__laps {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--pw-font-mono);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.telemetry__laps thead th {
+  padding: 6px 0;
+  border-bottom: 1px solid var(--pw-border);
+  font-family: var(--pw-font-body);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--pw-text-muted);
+  text-align: right;
+}
+
+.telemetry__laps th:first-child {
+  text-align: left;
+}
+
+.telemetry__laps tbody th {
+  padding: 8px 0;
+  font-weight: 400;
+  text-align: left;
+  color: var(--pw-text-muted);
+}
+
+.telemetry__laps td {
+  padding: 8px 0;
+  text-align: right;
+}
+
+.telemetry__laps .is-personal-best { color: var(--pw-sector-2); }
+.telemetry__laps .is-lap-time      { font-weight: 700; }
+.telemetry__laps .is-best          { color: var(--pw-positive); }
+.telemetry__laps .is-empty         { color: var(--pw-text-muted); }
+
+.telemetry__tyre {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--pw-text-muted);
+}

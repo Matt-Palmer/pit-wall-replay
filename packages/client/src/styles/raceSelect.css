@@ -1,0 +1,61 @@
+.race-select {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 40px 24px 64px;
+}
+
+.race-select__intro {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.race-select__heading {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.race-select__eyebrow {
+  font-family: var(--pw-font-mono);
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--pw-accent);
+}
+
+.race-select__heading h1 {
+  font-family: var(--pw-font-display);
+  font-weight: 700;
+  font-size: clamp(40px, 6vw, 56px);
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
+
+.race-select__lede {
+  max-width: 560px;
+  font-size: 16px;
+  color: var(--pw-text-muted);
+}
+
+.race-select__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+  list-style: none;
+}
+
+.race-select__message {
+  color: var(--pw-text-muted);
+}
+
+.race-select__footnote {
+  font-size: 13px;
+  color: var(--pw-text-muted);
+}

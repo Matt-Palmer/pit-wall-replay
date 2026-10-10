@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { shouldRetry } from './lib/helpers';
 import App from './App.tsx'
 import Session from './pages/Session.tsx'
+import { AppHeader } from './components/AppHeader/AppHeader.tsx'
 
 import './index.css';
   
@@ -32,6 +33,7 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
+        <AppHeader />
         <Routes>
           <Route path="/" element={<App />} />
           <Route path="/race/:sessionKey" element={<Session />} />

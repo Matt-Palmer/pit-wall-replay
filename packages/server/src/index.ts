@@ -4,7 +4,7 @@ import type { HealthResponse, SessionLocations } from "@pitwall/shared";
 import { lapsSchema, sessionsSchema, driversSchema, positionsSchema, intervalsSchema, stintsSchema, sessionResultsSchema, meetingsSchema, locationsSchema } from "@pitwall/shared";
 import { cached } from "./lib/cache";
 import { fetchJson } from "./lib/helpers";
-import { downsample, fastestLapTrack, mapWithConcurrency } from "./lib/locations";
+import { downsample, fastestLapTrack, hasPosition, mapWithConcurrency } from "./lib/locations";
 import { sessionIdParamsSchema, yearParamsSchema } from "./lib/params";
 
 const CACHE_TTL = 1000 * 60 * 60; // 1 hour
@@ -107,7 +107,7 @@ app.get("/api/session/:id/locations", async (req, res) => {
     const rows = await mapWithConcurrency(drivers, LOCATION_FETCH_CONCURRENCY, (driver) =>
       fetchJson("location", { session_key: id, driver_number: driver.driver_number }, locationsSchema, { emptyOnNotFound: true }),
     );
-    const rowsByDriver = new Map(drivers.map((driver, i) => [driver.driver_number, rows[i] ?? []]));
+    const rowsByDriver = new Map(drivers.map((driver, i) => [driver.driver_number, (rows[i] ?? []).filter(hasPosition)]));
 
     const cars: SessionLocations["cars"] = {};
     for (const [driverNumber, driverRows] of rowsByDriver) {
