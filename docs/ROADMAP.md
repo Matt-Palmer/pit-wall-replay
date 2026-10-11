@@ -2,7 +2,7 @@
 
 Status as of 2026-10-10. Tick boxes as tasks are completed.
 
-**Current step:** 0.3a, compare the tyre colour `switch` with `TYRE_COMPOUND_COLOURS`.
+**Current step:** 0.3g, commit the tyre colour change.
 
 ---
 
@@ -105,12 +105,12 @@ Each task is a single change you can check before moving on.
 
 ### 0.3 One source of tyre colours
 
-- [ ] **a.** Compare the `switch` in `DriverListItem.tsx` with `TYRE_COMPOUND_COLOURS` in `constants/compounds.ts`. Note that `TYRE_COMPOUND_COLOURS` isn't imported anywhere
-- [ ] **b.** Pick which colours are correct. Hint: `TelemetryPanel` uses `#F5D33F` for medium
-- [ ] **c.** Update `TYRE_COMPOUND_COLOURS` with the chosen values
-- [ ] **d.** Check the type of `row.compound` in `StandingRow` (`lib/timeline.ts`). Is `.toLowerCase()` needed at all? Are the keys `'SOFT'` or `'soft'`?
-- [ ] **e.** Replace the `switch` with a lookup into the constant, keeping a fallback for `undefined`
-- [ ] **f.** Run the app and check the tyre pills look the same as before
+- [x] **a.** Compare the `switch` in `DriverListItem.tsx` with `TYRE_COMPOUND_COLOURS` in `constants/compounds.ts`. Note that `TYRE_COMPOUND_COLOURS` isn't imported anywhere
+- [x] **b.** Pick which colours are correct. Hint: `TelemetryPanel` uses `#F5D33F` for medium. *Decision:* keep the `switch` colours; the constant only had placeholder values
+- [x] **c.** Update `TYRE_COMPOUND_COLOURS` with the chosen values
+- [x] **d.** Check the type of `row.compound` in `StandingRow` (`lib/timeline.ts`). Is `.toLowerCase()` needed at all? Are the keys `'SOFT'` or `'soft'`?
+- [x] **e.** Replace the `switch` with a lookup into the constant, keeping a fallback for `undefined`
+- [x] **f.** Run the app and check the tyre pills look the same as before
 - [ ] **g.** Commit
 
 `TelemetryPanel` also hardcodes a tyre colour, but its data is all placeholder and gets replaced in Phase 2, so leave it alone for now.

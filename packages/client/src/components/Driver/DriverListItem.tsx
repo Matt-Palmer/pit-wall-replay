@@ -1,20 +1,10 @@
 import type { StandingRow } from "../../lib/timeline";
+import { TYRE_COMPOUND_COLOURS } from "../../constants/compounds";
+import type { TyreCompound } from "@pitwall/shared";
 
-function setTyreCompoundColour(compound: string | undefined) {
-	switch (compound?.toLowerCase()) {
-		case 'soft':
-			return '#E8384F';
-		case 'medium':
-			return '#F5D33F';
-		case 'hard':
-			return '#E6EAEE';
-		case 'intermediate':
-			return '#43D17A';
-		case 'wet':
-			return '#4D8BFF';
-		default:
-			return '#cccccc';
-	}
+function setTyreCompoundColour(compound: TyreCompound | undefined) {
+	if (!compound) return '#cccccc';
+	return TYRE_COMPOUND_COLOURS[compound];
 }
 
 type DriverListItemProps = {
