@@ -1,4 +1,4 @@
-import type { Driver } from "../../../../shared/src/schemas/driver";
+import type { Driver } from "@pitwall/shared";
 
 export type LineStyle = { stroke: string; strokeDasharray?: string };
 

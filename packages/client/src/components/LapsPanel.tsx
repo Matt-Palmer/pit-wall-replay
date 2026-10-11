@@ -1,7 +1,7 @@
 import { skipToken, useQuery } from '@tanstack/react-query';
 import { fetchSessionDrivers, fetchSessionLaps } from '../lib/queries';
 import { useDeferredValue, useMemo, useState } from 'react';
-import type { LapWithDriver } from '../../../shared/src/schemas/lap';
+import type { LapWithDriver } from '@pitwall/shared';
 import LapTable from './LapTable';
 
 type LapsPanelProps = {

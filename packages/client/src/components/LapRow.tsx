@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import type { LapWithDriver } from '../../../shared/src/schemas/lap';
+import type { LapWithDriver } from '@pitwall/shared';
 import type { Row } from '@tanstack/react-table';
 import { features, GRID_TEMPLATE_COLUMNS } from '../lib/tableConfig';
 import { flexRender } from '@tanstack/react-table';

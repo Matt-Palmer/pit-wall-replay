@@ -1,4 +1,4 @@
-import type { LapWithDriver } from '../../../shared/src/schemas/lap';
+import type { LapWithDriver } from '@pitwall/shared';
 import { tableFeatures, rowSortingFeature, createSortedRowModel, createColumnHelper } from '@tanstack/react-table';
 // Register only the features this table needs. Sorting is actually two
 // pieces: `rowSortingFeature` (state + column APIs like toggleSorting) and

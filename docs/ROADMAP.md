@@ -119,12 +119,12 @@ Each task is a single change you can check before moving on.
 
 There are 25 relative `../../../shared/src/...` imports across 11 files. Do one file (or small group) per step, and keep `import type` for type-only imports.
 
-- [ ] **a.** Check `packages/shared/src/index.ts` and confirm everything those files import is exported from it
-- [ ] **b.** `lib/queries.ts` (most imports, so start here)
-- [ ] **c.** `lib/timeline.ts`
+- [x] **a.** Check `packages/shared/src/index.ts` and confirm everything those files import is exported from it
+- [x] **b.** `lib/queries.ts` (most imports, so start here)
+- [x] **c.** `lib/timeline.ts`
 - [x] **d.** `hooks/useSessionTimeline.ts` (done in e812cf0)
-- [ ] **e.** `components/TrackMap/TrackMap.tsx`
-- [ ] **f.** `components/Charts/PositionPerLapD3.tsx` and `lineStyles.ts`
-- [ ] **g.** `lib/tableConfig.tsx` and the four `Lap*` components
-- [ ] **h.** `grep -rn "shared/src" packages/client/src` returns nothing
-- [ ] **i.** Typecheck, tests, commit
+- [x] **e.** `components/TrackMap/TrackMap.tsx`
+- [x] **f.** `components/Charts/PositionPerLapD3.tsx` and `lineStyles.ts`
+- [x] **g.** `lib/tableConfig.tsx` and the four `Lap*` components
+- [x] **h.** `grep -rn "shared/src" packages/client/src` returns nothing
+- [x] **i.** Typecheck, tests, commit

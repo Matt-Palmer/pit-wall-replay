@@ -2,8 +2,7 @@ import { useMemo } from 'react';
 import { extent } from 'd3-array';
 import { curveCatmullRomClosed, line } from 'd3-shape';
 
-import type { Driver } from '../../../../shared/src/schemas/driver';
-import type { SessionLocations } from '../../../../shared/src/schemas/location';
+import type { Driver, SessionLocations } from '@pitwall/shared';
 import { carPositionAt } from '../../lib/timeline';
 
 import '../../styles/trackMap.css';

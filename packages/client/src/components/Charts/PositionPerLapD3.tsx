@@ -5,7 +5,7 @@ import { scaleLinear } from "d3-scale";
 import { line } from "d3-shape";
 
 import type { SessionTimeline } from "../../hooks/useSessionTimeline";
-import type { Driver } from "../../../../shared/src/schemas/driver";
+import type { Driver } from "@pitwall/shared";
 import { lapPositions, latestAtOrBefore } from "../../lib/timeline";
 import type { LapPosition } from "../../lib/timeline";
 import { driverLineStyles } from "./lineStyles";

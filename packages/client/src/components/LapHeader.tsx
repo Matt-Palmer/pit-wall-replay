@@ -1,7 +1,7 @@
 import { memo } from "react";
 import { flexRender, type Header } from "@tanstack/react-table";
 import type { features } from "../lib/tableConfig";
-import type { LapWithDriver } from "../../../shared/src/schemas/lap";
+import type { LapWithDriver } from "@pitwall/shared";
 
 // Reads everything it needs off `header` itself (via the standalone
 // `flexRender`, not `table.FlexRender`) rather than taking `table` as a prop.

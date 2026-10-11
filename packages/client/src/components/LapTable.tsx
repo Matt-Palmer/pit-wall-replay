@@ -2,7 +2,7 @@ import { useMemo, useRef } from "react";
 import { useTable } from "@tanstack/react-table";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { features, columns, GRID_TEMPLATE_COLUMNS } from "../lib/tableConfig";
-import type { LapWithDriver } from '../../../shared/src/schemas/lap';
+import type { LapWithDriver } from '@pitwall/shared';
 import LapRow from "./LapRow";
 import TableHeader from "./LapHeader";
 
