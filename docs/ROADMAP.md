@@ -2,7 +2,7 @@
 
 Status as of 2026-10-10. Tick boxes as tasks are completed.
 
-**Current step:** 0.3g, commit the tyre colour change.
+**Current step:** 0.4a, check that `@pitwall/shared` exports everything the relative imports use.
 
 ---
 
@@ -42,7 +42,7 @@ Status as of 2026-10-10. Tick boxes as tasks are completed.
 1. ~~**Client typecheck fails**: unused `isMeetingLoading` in `Session.tsx`~~ (fixed in e6dc0f9)
 2. ~~**Unnecessary recalculation in `useSessionTimeline.ts`**: if the result query fails, `result = []` is a new array every render, so the timeline is rebuilt every frame during playback~~ (fixed in e812cf0)
 3. **Broken driver links**: `DriverListItem` links to `/drivers/N`, which doesn't match `/race/:sessionKey/driver/:driverNumber`. It's also a plain `<a>`, so clicking it reloads the page and loses playback position
-4. **Conflicting tyre colours**: `DriverListItem` has its own colour switch, which doesn't match the unused `constants/compounds.ts`
+4. ~~**Conflicting tyre colours**: `DriverListItem` has its own colour switch, which doesn't match the unused `constants/compounds.ts`~~ (fixed in 9339271)
 5. **Mixed import styles**: some files use `@pitwall/shared`, others use relative `../../../shared/src/...`
 6. **Bare error and 404 states**: plain `<div>Error: …</div>` and a plain-text not-found page
 7. **Deferred**: hide each car's map marker once that driver crosses the finish line
@@ -111,7 +111,7 @@ Each task is a single change you can check before moving on.
 - [x] **d.** Check the type of `row.compound` in `StandingRow` (`lib/timeline.ts`). Is `.toLowerCase()` needed at all? Are the keys `'SOFT'` or `'soft'`?
 - [x] **e.** Replace the `switch` with a lookup into the constant, keeping a fallback for `undefined`
 - [x] **f.** Run the app and check the tyre pills look the same as before
-- [ ] **g.** Commit
+- [x] **g.** Commit
 
 `TelemetryPanel` also hardcodes a tyre colour, but its data is all placeholder and gets replaced in Phase 2, so leave it alone for now.
 
