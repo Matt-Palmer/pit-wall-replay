@@ -2,7 +2,7 @@
 
 Status as of 2026-10-10. Tick boxes as tasks are completed.
 
-**Current step:** 0.2f, commit the timeline fix.
+**Current step:** 0.3a, compare the tyre colour `switch` with `TYRE_COMPOUND_COLOURS`.
 
 ---
 
@@ -40,7 +40,7 @@ Status as of 2026-10-10. Tick boxes as tasks are completed.
 ### Bugs and loose ends
 
 1. ~~**Client typecheck fails**: unused `isMeetingLoading` in `Session.tsx`~~ (fixed in e6dc0f9)
-2. **Unnecessary recalculation in `useSessionTimeline.ts`**: if the result query fails, `result = []` is a new array every render, so the timeline is rebuilt every frame during playback
+2. ~~**Unnecessary recalculation in `useSessionTimeline.ts`**: if the result query fails, `result = []` is a new array every render, so the timeline is rebuilt every frame during playback~~ (fixed in e812cf0)
 3. **Broken driver links**: `DriverListItem` links to `/drivers/N`, which doesn't match `/race/:sessionKey/driver/:driverNumber`. It's also a plain `<a>`, so clicking it reloads the page and loses playback position
 4. **Conflicting tyre colours**: `DriverListItem` has its own colour switch, which doesn't match the unused `constants/compounds.ts`
 5. **Mixed import styles**: some files use `@pitwall/shared`, others use relative `../../../shared/src/...`
@@ -101,7 +101,7 @@ Each task is a single change you can check before moving on.
 - [x] **c.** Look at how `Session.tsx` avoids the same problem with `NO_LAPS`
 - [x] **d.** Apply that pattern here
 - [x] **e.** Run `npx oxlint` in `packages/client`. *Done when:* the `exhaustive-deps` warning on `result` is gone
-- [ ] **f.** Commit
+- [x] **f.** Commit
 
 ### 0.3 One source of tyre colours
 
@@ -122,7 +122,7 @@ There are 25 relative `../../../shared/src/...` imports across 11 files. Do one 
 - [ ] **a.** Check `packages/shared/src/index.ts` and confirm everything those files import is exported from it
 - [ ] **b.** `lib/queries.ts` (most imports, so start here)
 - [ ] **c.** `lib/timeline.ts`
-- [ ] **d.** `hooks/useSessionTimeline.ts`
+- [x] **d.** `hooks/useSessionTimeline.ts` (done in e812cf0)
 - [ ] **e.** `components/TrackMap/TrackMap.tsx`
 - [ ] **f.** `components/Charts/PositionPerLapD3.tsx` and `lineStyles.ts`
 - [ ] **g.** `lib/tableConfig.tsx` and the four `Lap*` components
