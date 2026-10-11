@@ -1,6 +1,4 @@
-import type { Driver } from '../../../shared/src/schemas/driver';
-import type { TyreCompound } from '../../../shared/src/compounds';
-import type { CarTrack } from '../../../shared/src/schemas/location';
+import type { Driver, TyreCompound, CarTrack } from '@pitwall/shared';
 import type { SessionTimeline } from '../hooks/useSessionTimeline';
 
 export type StandingRow = {

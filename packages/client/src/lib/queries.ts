@@ -1,13 +1,5 @@
-import { sessionsSchema } from '../../../shared/src/schemas/session';
-import { meetingsSchema } from '../../../shared/src/schemas/meeting';
-import { driversSchema } from '../../../shared/src/schemas/driver';
-import { lapsSchema } from '../../../shared/src/schemas/lap';
-import { positionsSchema } from '../../../shared/src/schemas/position';
-import { stintsSchema } from '../../../shared/src/schemas/stint';
+import { sessionsSchema, meetingsSchema, driversSchema, lapsSchema, positionsSchema, stintsSchema, intervalsSchema, sessionResultsSchema, sessionLocationsSchema } from '@pitwall/shared';
 import { ApiError } from './helpers';
-import { intervalsSchema } from '../../../shared/src/schemas/intervals';
-import { sessionResultsSchema } from '../../../shared/src/schemas/session-result';
-import { sessionLocationsSchema } from '../../../shared/src/schemas/location';
 
 export async function fetchSessions(year: string, signal?: AbortSignal) {
   const res = await fetch(`/api/sessions/${year}`, { signal })
