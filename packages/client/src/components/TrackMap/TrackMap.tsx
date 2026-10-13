@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { extent } from 'd3-array';
-import { curveCatmullRomClosed, line } from 'd3-shape';
+import { curveCatmullRom, curveCatmullRomClosed, line } from 'd3-shape';
 
 import type { Driver, SessionLocations } from '@pitwall/shared';
 import { carPositionAt } from '../../lib/timeline';
@@ -31,7 +31,7 @@ const toPoint = (x: number, y: number): [number, number] => [x, -y];
 function TrackMap({ locations, driversMap, stoppedAt, t, hoveredDriver, selectedDriver, onHoverDriver, onSelectDriver }: TrackMapProps) {
   const { track } = locations;
 
-  const { path, viewBox, radius } = useMemo(() => {
+  const { path, sectorPaths, viewBox, radius } = useMemo(() => {
     const points = track.x.map((x, i) => toPoint(x, track.y[i]!));
     // Fall back to the cars' own samples if there was no clean lap to draw the circuit from
     const boundsX = points.length ? track.x : Object.values(locations.cars).flatMap((car) => car.x);
@@ -42,8 +42,19 @@ function TrackMap({ locations, driversMap, stoppedAt, t, hoveredDriver, selected
     const size = Math.max(maxX - minX, maxY - minY) || 1;
     const pad = size * PADDING_RATIO;
 
+    // Each sector runs to the first point of the next one, and sector 3 back round to the start, so they join up
+    const bounds = [0, ...track.sectorStarts, points.length];
+    const sectorPaths = track.sectorStarts.length
+      ? bounds.slice(0, -1).map((from, i) => {
+          const sector = points.slice(from, bounds[i + 1]! + 1);
+          if (i === bounds.length - 2) sector.push(points[0]!);
+          return line().curve(curveCatmullRom)(sector) ?? '';
+        })
+      : [];
+
     return {
       path: points.length ? line().curve(curveCatmullRomClosed)(points) ?? undefined : undefined,
+      sectorPaths,
       viewBox: `${minX - pad} ${minY - pad} ${maxX - minX + pad * 2} ${maxY - minY + pad * 2}`,
       radius: size * CAR_RADIUS_RATIO,
     };
@@ -79,6 +90,9 @@ function TrackMap({ locations, driversMap, stoppedAt, t, hoveredDriver, selected
 				aria-label="Car positions on the circuit"
 			>
 				{path && <path className="track-map__track" d={path} />}
+				{sectorPaths.map((d, i) => (
+					<path key={i} className={`track-map__sector track-map__sector--${i + 1}`} d={d} />
+				))}
 
 				{cars.map((car) => (
 					<g

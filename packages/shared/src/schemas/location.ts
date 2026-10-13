@@ -24,6 +24,8 @@ export const sessionLocationsSchema = z.object({
   track: z.object({
     x: z.array(z.number()),
     y: z.array(z.number()),
+    // Indexes into x and y where sectors 2 and 3 begin; empty when the lap has no sector times
+    sectorStarts: z.array(z.number()),
   }),
   // Keyed by driver number
   cars: z.record(z.string(), carTrackSchema),

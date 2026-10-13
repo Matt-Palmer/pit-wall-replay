@@ -1,21 +1,30 @@
 .session {
+  /* Height of the fixed scrubber, so the page can scroll clear of it */
+  --session-scrubber-height: 112px;
+
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 16px 24px 24px;
+  padding: 0 24px calc(var(--session-scrubber-height) + 24px);
 }
 
+/* Fills the screen between the app header and the scrubber; the min-height stops it being crushed on short windows */
+.session-viewport {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  height: calc(100dvh - var(--pw-app-header-height) - var(--session-scrubber-height));
+  min-height: 480px;
+  padding: 16px 0;
+}
+
+/* Timing on the left, track in the middle, telemetry over race control on the right */
 .session-grid {
+  flex: 1;
+  min-height: 0;
   display: grid;
-  grid-template-columns: 340px repeat(4, 1fr);
-  grid-template-rows: repeat(5, 1fr) auto;
-  grid-template-areas:
-    "drivers map    map    map    map"
-    "drivers map    map    map    map"
-    "drivers map    map    map    map"
-    "drivers table1 table1 table2 table2"
-    "drivers table1 table1 table2 table2"
-    "lap     lap    lap    lap    lap";
+  grid-template-columns: 340px minmax(0, 1fr) 380px;
+  grid-template-areas: "drivers map side";
   gap: 16px;
 }
 
@@ -25,13 +34,10 @@
   min-height: 0;
 }
 
-.session-grid__drivers { grid-area: drivers; }
+.session-grid__drivers { grid-area: drivers; display: flex; }
 .session-grid__map     { grid-area: map; }
-.session-grid__table1  { grid-area: table1; }
-.session-grid__table2  { grid-area: table2; }
-.session-grid__lap     { grid-area: lap; }
+.session-grid__side    { grid-area: side; }
 
-/* Map panel: fills the space left above the scrubber */
 .session-grid__map {
   display: flex;
   flex-direction: column;
@@ -42,6 +48,14 @@
   border-radius: var(--pw-radius-lg);
 }
 
+.session-grid__map-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
 /* Map is taken out of flow so it fills the space without affecting row height */
 .session-grid__map-image {
   position: relative;
@@ -49,9 +63,64 @@
   min-height: 0;
 }
 
-.session-grid__lap {
+/* Telemetry keeps its height; race control takes what is left and scrolls */
+.session-grid__side {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.session-grid__control {
+  flex: 1;
+  min-height: 0;
+}
+
+.session-lap {
   padding: 16px;
   background: var(--pw-panel);
   border: 1px solid var(--pw-border);
   border-radius: var(--pw-radius-lg);
+}
+
+@media (max-width: 1200px) {
+  .session-grid {
+    grid-template-columns: 280px minmax(0, 1fr) 320px;
+  }
+}
+
+/* Small screens: everything stacks and the page scrolls normally */
+@media (max-width: 900px) {
+  .session-viewport {
+    height: auto;
+    min-height: 0;
+  }
+
+  .session-grid {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "map"
+      "drivers"
+      "side";
+  }
+
+  .session-grid__map-image {
+    aspect-ratio: 4 / 3;
+  }
+}
+
+/* Replay controls pinned to the bottom of the viewport */
+.session-scrubber {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  min-height: var(--session-scrubber-height);
+  padding: 12px 24px 16px;
+  background: var(--pw-bg-raised);
+  border-top: 1px solid var(--pw-border);
 }

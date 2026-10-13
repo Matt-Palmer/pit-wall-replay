@@ -12,7 +12,7 @@ function DriverListSkeleton() {
 			<div className="driver-list__toggle">
 				<Skeleton width="10rem" height="2rem" />
 			</div>
-			<ul className="driver-list">
+			<ul className="driver-list" style={{ '--driver-count': ROW_COUNT } as React.CSSProperties}>
 				{Array.from({ length: ROW_COUNT }, (_, i) => (
 					<li key={i}>
 						<div

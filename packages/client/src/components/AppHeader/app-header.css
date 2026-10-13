@@ -3,6 +3,7 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 16px 32px;
+  min-height: var(--pw-app-header-height);
   padding: 14px 24px;
   background: var(--pw-bg-raised);
   border-bottom: 1px solid var(--pw-border);

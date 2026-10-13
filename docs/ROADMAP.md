@@ -1,8 +1,8 @@
 # Pit Wall Replay: Roadmap
 
-Status as of 2026-10-10. Tick boxes as tasks are completed.
+Status as of 2026-10-11. Tick boxes as tasks are completed.
 
-**Current step:** 0.4a, check that `@pitwall/shared` exports everything the relative imports use.
+**Current step:** 1.3b, add `cursor: pointer` for `.track-map__car` (the `onClick` is already in), then 1.3c.
 
 ---
 
@@ -43,7 +43,7 @@ Status as of 2026-10-10. Tick boxes as tasks are completed.
 2. ~~**Unnecessary recalculation in `useSessionTimeline.ts`**: if the result query fails, `result = []` is a new array every render, so the timeline is rebuilt every frame during playback~~ (fixed in e812cf0)
 3. **Broken driver links**: `DriverListItem` links to `/drivers/N`, which doesn't match `/race/:sessionKey/driver/:driverNumber`. It's also a plain `<a>`, so clicking it reloads the page and loses playback position
 4. ~~**Conflicting tyre colours**: `DriverListItem` has its own colour switch, which doesn't match the unused `constants/compounds.ts`~~ (fixed in 9339271)
-5. **Mixed import styles**: some files use `@pitwall/shared`, others use relative `../../../shared/src/...`
+5. ~~**Mixed import styles**: some files use `@pitwall/shared`, others use relative `../../../shared/src/...`~~ (fixed in 334a910 and 9224486)
 6. **Bare error and 404 states**: plain `<div>Error: …</div>` and a plain-text not-found page
 7. **Deferred**: hide each car's map marker once that driver crosses the finish line
 8. **README** is still the default Vite template
@@ -52,11 +52,11 @@ Status as of 2026-10-10. Tick boxes as tasks are completed.
 
 ## Phases
 
-### Phase 0: Fix what's broken
-Small, mechanical work so the build is green and the code is consistent. Detailed breakdown below.
+### Phase 0: Fix what's broken ✅
+Small, mechanical work so the build is green and the code is consistent. Breakdown below.
 
 ### Phase 1: Driver selection
-Needed by the telemetry panel, the driver page and the map.
+Needed by the telemetry panel, the driver page and the map. Breakdown below.
 - Add a selected-driver state to `Session.tsx`: click a driver in the list or on the map to select them; hovering stays a temporary highlight
 - Fix the driver link (bug 3) at the same time
 
@@ -128,3 +128,45 @@ There are 25 relative `../../../shared/src/...` imports across 11 files. Do one 
 - [x] **g.** `lib/tableConfig.tsx` and the four `Lap*` components
 - [x] **h.** `grep -rn "shared/src" packages/client/src` returns nothing
 - [x] **i.** Typecheck, tests, commit
+
+---
+
+## Phase 1 breakdown
+
+Hovering already works: `Session.tsx` holds `hoveredDriver` and passes it down to `DriverList` and `TrackMap`. Selection follows the same path, but it sticks after the pointer leaves. Clicking the selected driver again clears it.
+
+### 1.1 Add the state
+
+- [x] **a.** In `Session.tsx`, add `selectedDriver` state next to `hoveredDriver`, with the same type
+- [x] **b.** Write a `toggleSelectedDriver(driverNumber)` function that selects the driver, or clears the selection if that driver is already selected. Hint: pass a function to the setter (`setSelectedDriver(current => ...)`) so you don't read stale state
+- [x] **c.** Temporarily render `{selectedDriver}` somewhere visible (e.g. above `<TelemetryPanel />`) so you can watch it change in the next steps. You'll delete it in 1.4
+
+### 1.2 Driver list: click to select (also fixes bug 3)
+
+- [x] **a.** Read `DriverListItem`. The row is an `<a href="/drivers/N">`. Answer two questions: why does clicking it reload the whole page, and does a row that *selects* something belong in a link or a button? *Done when:* you can say in a sentence why it should be a `<button type="button">`. The real driver page link comes back in Phase 4 using React Router's `<Link>`
+- [x] **b.** Swap the `<a>` for a `<button type="button">` and remove the `href`. Leave the click handler for the next step
+- [x] **c.** Run the app. Buttons come with browser styles (background, border, font, centred text, width), so the row will probably look different. Fix it in `.driver-list-item` in `driversPanel.css`. *Done when:* the list looks the same as before
+- [x] **d.** Add two props to `DriverListItem`: `selected: boolean` and `onSelect: (driverNumber: number) => void`. Call `onSelect` from `onClick`
+- [x] **e.** Add `selectedDriver` and `onSelectDriver` props to `DriverList` and pass them through to each item (same pattern as `hoveredDriver` and `onHoverDriver`)
+- [x] **f.** Pass `selectedDriver` and `toggleSelectedDriver` from `Session.tsx`. *Done when:* clicking a row changes the number from 1.1c, and clicking it again clears it
+- [x] **g.** Add `aria-pressed={selected}` to the button. Look up what it tells a screen reader
+- [x] **h.** Give the selected row its own look. The `className` ternary only handles one flag, so first change it to build the class list from both `highlighted` and `selected`, then add an `.is-selected` rule in the CSS. Make it different from hover (e.g. a team-colour left border or a stronger background using `--team-colour`). *Done when:* you can hover one driver while another is selected and tell them apart
+- [x] **i.** Gotcha check: click a driver, then press Space. What happens, and why? (Read the comment in `usePlayback.ts` near `HTMLButtonElement`.) Decide if that's acceptable. It's fine to leave it, but know why it happens
+- [x] **j.** Typecheck, lint, commit
+
+### 1.3 Track map: click to select
+
+- [x] **a.** Add `selectedDriver` and `onSelectDriver` props to `TrackMap`, and pass them from `Session.tsx`
+- [ ] **b.** Add `onClick` to each car's `<g>`. Add `cursor: pointer` for `.track-map__car` in `trackMap.css`. *Done when:* clicking a car on the map highlights its row in the list
+- [ ] **c.** Right now only `hoveredCar` gets drawn on top with its name label, so the selected car loses its label as soon as the mouse leaves. Change it so the selected car always gets the label, and the hovered car does too. Watch out for the case where they're the same driver: don't draw it twice
+- [ ] **d.** Run the app: select from the list, move the mouse away, and check the map label stays. Select from the map and check the list row
+- [ ] **e.** Edge case: select a driver who retires (pick a race with a DNF) and play past the point where they stop. The car disappears from the map. Check nothing breaks and the list row still shows as selected
+- [ ] **f.** Typecheck, lint, commit
+
+### 1.4 Tidy up
+
+- [ ] **a.** Remove the temporary `{selectedDriver}` from 1.1c
+- [ ] **b.** Update the `TelemetryPanel` TODO comment in `Session.tsx` to say it will use `selectedDriver` (Phase 2)
+- [ ] **c.** *(Optional)* Press Escape to clear the selection. Think about where the listener belongs: `usePlayback` handles playback keys, and selection isn't playback
+- [ ] **d.** Strike through bug 3 above and tick Phase 1
+- [ ] **e.** Typecheck, lint, tests, commit

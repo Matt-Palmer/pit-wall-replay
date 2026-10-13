@@ -62,101 +62,116 @@ function Session() {
 
   return (
 		<div className="session">
-			{meeting ? (
-				<SessionHeader meeting={meeting} />
-			) : meetingError ? (
-				<div>Error loading meeting: {meetingError.message}</div>
-			) : (
-				<SessionHeaderSkeleton />
-			)}
+			{/* Sized to the space between the app header and the scrubber, so the map and timing are always in view */}
+			<div className="session-viewport">
+				{meeting ? (
+					<SessionHeader meeting={meeting} />
+				) : meetingError ? (
+					<div>Error loading meeting: {meetingError.message}</div>
+				) : (
+					<SessionHeaderSkeleton />
+				)}
 
-			{error && <div>Error: {error.message}</div>}
-			<div className="session-grid">
-				<div className="session-grid__drivers">
-					{isLoading ? (
-						<DriverListSkeleton />
-					) : (
-						!error && (
-							<DriverList
-								standings={standings}
-								leaderLap={leaderLap}
-								totalLaps={totalLaps}
-								hoveredDriver={hoveredDriver}
-								selectedDriver={selectedDriver}
-								onHoverDriver={setHoveredDriver}
-								onSelectDriver={toggleSelectedDriver}
-							/>
-						)
-					)}
-				</div>
-
-				<div className="session-grid__map">
-					<div className="session-grid__map-image">
-						{locationsError ? (
-							<div>Error loading car positions: {locationsError.message}</div>
-						) : isLocationsLoading || !locations || !timeline ? (
-							<Skeleton className="track-map-skeleton" height="100%" radius={8} />
+				{error && <div>Error: {error.message}</div>}
+				<div className="session-grid">
+					<div className="session-grid__drivers">
+						{isLoading ? (
+							<DriverListSkeleton />
 						) : (
-							<TrackMap
-								locations={locations}
-								driversMap={driversMap}
-								stoppedAt={timeline.stoppedAt}
-								t={timeline.start + mapTimeMs}
-								hoveredDriver={hoveredDriver}
-								selectedDriver={selectedDriver}
-								onHoverDriver={setHoveredDriver}
-								onSelectDriver={toggleSelectedDriver}
-							/>
+							!error && (
+								<DriverList
+									standings={standings}
+									leaderLap={leaderLap}
+									totalLaps={totalLaps}
+									hoveredDriver={hoveredDriver}
+									selectedDriver={selectedDriver}
+									onHoverDriver={setHoveredDriver}
+									onSelectDriver={toggleSelectedDriver}
+								/>
+							)
 						)}
 					</div>
 
-					{isLoading ? (
-						<RaceScrubberSkeleton />
-					) : (
-						<RaceScrubber
-							timeMs={raceTimeMs}
-							onTimeChange={playback.seek}
-							onScrub={setScrubMs}
-							leaderLapStarts={timeline?.leaderLapStarts ?? NO_LAPS}
-							start={timeline?.start || 0}
-							end={timeline?.end || 0}
-							playback={playback.state}
-							onTogglePlay={playback.togglePlay}
-							onSpeed={playback.setSpeed}
-							onHold={playback.hold}
-							onRelease={playback.release}
-							onNextLap={playback.nextLap}
-							onPrevLap={playback.prevLap}
-						/>
-					)}
-				</div>
+					<div className="session-grid__map">
+						<div className="session-grid__map-header">
+							<h2 className="panel__title">Track</h2>
+							<div className="track-map-legend">
+								<span style={{ '--sector-colour': 'var(--pw-sector-1)' } as React.CSSProperties}>Sector 1</span>
+								<span style={{ '--sector-colour': 'var(--pw-sector-2)' } as React.CSSProperties}>Sector 2</span>
+								<span style={{ '--sector-colour': 'var(--pw-sector-3)' } as React.CSSProperties}>Sector 3</span>
+							</div>
+						</div>
+						<div className="session-grid__map-image">
+							{locationsError ? (
+								<div>Error loading car positions: {locationsError.message}</div>
+							) : isLocationsLoading || !locations || !timeline ? (
+								<Skeleton className="track-map-skeleton" height="100%" radius={8} />
+							) : (
+								<TrackMap
+									locations={locations}
+									driversMap={driversMap}
+									stoppedAt={timeline.stoppedAt}
+									t={timeline.start + mapTimeMs}
+									hoveredDriver={hoveredDriver}
+									selectedDriver={selectedDriver}
+									onHoverDriver={setHoveredDriver}
+									onSelectDriver={toggleSelectedDriver}
+								/>
+							)}
+						</div>
+					</div>
 
-				<div className="session-grid__table1">
-					{selectedDriver !== null && <p>Selected Driver: {selectedDriver}</p>}
-					{/* TODO: wire up to the hovered/selected driver */}
-					<TelemetryPanel />
-				</div>
+					<div className="session-grid__side">
+						<div className="session-grid__telemetry">
+							{selectedDriver !== null && <p>Selected Driver: {selectedDriver}</p>}
+							{/* TODO: wire up to the hovered/selected driver */}
+							<TelemetryPanel />
+						</div>
 
-				<div className="session-grid__table2">
-					{/* TODO: wire up to race control messages */}
-					<RaceControl />
-				</div>
-
-				<div className="session-grid__lap">
-					{isLoading ? (
-						<PositionPerLapSkeleton />
-					) : (
-						timeline && (
-							<PositionPerLapD3
-								timeline={timeline}
-								driversMap={driversMap}
-								t={timeline.start + raceTimeMs}
-								totalLaps={totalLaps}
-							/>
-						)
-					)}
+						<div className="session-grid__control">
+							{/* TODO: wire up to race control messages */}
+							<RaceControl />
+						</div>
+					</div>
 				</div>
 			</div>
+
+			<div className="session-lap">
+				{isLoading ? (
+					<PositionPerLapSkeleton />
+				) : (
+					timeline && (
+						<PositionPerLapD3
+							timeline={timeline}
+							driversMap={driversMap}
+							t={timeline.start + raceTimeMs}
+							totalLaps={totalLaps}
+						/>
+					)
+				)}
+			</div>
+
+			<footer className="session-scrubber">
+				{isLoading ? (
+					<RaceScrubberSkeleton />
+				) : (
+					<RaceScrubber
+						timeMs={raceTimeMs}
+						onTimeChange={playback.seek}
+						onScrub={setScrubMs}
+						leaderLapStarts={timeline?.leaderLapStarts ?? NO_LAPS}
+						start={timeline?.start || 0}
+						end={timeline?.end || 0}
+						playback={playback.state}
+						onTogglePlay={playback.togglePlay}
+						onSpeed={playback.setSpeed}
+						onHold={playback.hold}
+						onRelease={playback.release}
+						onNextLap={playback.nextLap}
+						onPrevLap={playback.prevLap}
+					/>
+				)}
+			</footer>
 		</div>
 	);
 }

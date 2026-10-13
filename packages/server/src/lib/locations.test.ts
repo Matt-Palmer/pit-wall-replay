@@ -102,7 +102,18 @@ describe("fastestLapTrack", () => {
   });
 
   it("returns an empty track when no lap qualifies", () => {
-    expect(fastestLapTrack([lap({ lap_number: 1 })], rowsByDriver)).toEqual({ x: [], y: [] });
+    expect(fastestLapTrack([lap({ lap_number: 1 })], rowsByDriver)).toEqual({ x: [], y: [], sectorStarts: [] });
+  });
+
+  it("marks where sectors 2 and 3 start from the lap's sector times", () => {
+    const laps = [lap({ lap_duration: 90, duration_sector_1: 30, duration_sector_2: 25.05, duration_sector_3: 34.95 })];
+    const track = fastestLapTrack(laps, rowsByDriver);
+    // Samples are 100 ms apart, so sector 3's boundary at 55.05 s falls to the next sample at 55.1 s
+    expect(track.sectorStarts).toEqual([300, 551]);
+  });
+
+  it("leaves sectors out when the lap has no sector times", () => {
+    expect(fastestLapTrack([lap({ duration_sector_1: null })], rowsByDriver).sectorStarts).toEqual([]);
   });
 });
 

@@ -3,6 +3,7 @@
   flex-direction: column;
   gap: 8px;
   width: 100%;
+  min-height: 0;
   padding: 14px 8px 8px;
   background: var(--pw-panel);
   border: 1px solid var(--pw-border);
@@ -55,19 +56,36 @@
   background: var(--pw-panel-hover);
 }
 
+/*
+ * Every driver always fits: the list takes the panel's remaining height and splits it into equal rows,
+ * and the row contents scale with the row height (cqh is a percentage of the list's height).
+ */
 .driver-list {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+  --driver-gap: 2px;
+
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-auto-rows: minmax(0, 1fr);
+  gap: var(--driver-gap);
   list-style-type: none;
+  container-type: size;
+}
+
+.driver-list > li {
+  --driver-row: calc((100cqh - (var(--driver-count, 20) - 1) * var(--driver-gap)) / var(--driver-count, 20));
+
+  display: flex;
+  min-height: 0;
 }
 
 .driver-list-item {
   display: flex;
   align-items: center;
   gap: 10px;
-  min-height: 40px;
-  padding: 4px 10px;
+  height: 100%;
+  padding: 0 10px;
+  overflow: hidden;
   border: 1px solid transparent;
   border-radius: var(--pw-radius);
   background: transparent;
@@ -91,12 +109,13 @@
   text-align: right;
   font-family: var(--pw-font-mono);
   font-weight: 700;
+  font-size: clamp(10px, calc(var(--driver-row) * 0.6), 15px);
   color: var(--pw-text-muted);
 }
 
 .driver-list-item__team {
   width: 4px;
-  height: 22px;
+  height: clamp(10px, calc(var(--driver-row) * 0.75), 22px);
   border-radius: 2px;
   background: var(--team-colour);
   flex-shrink: 0;
@@ -106,7 +125,7 @@
   width: 44px;
   font-family: var(--pw-font-display);
   font-weight: 700;
-  font-size: 18px;
+  font-size: clamp(12px, calc(var(--driver-row) * 0.75), 18px);
   letter-spacing: 0.04em;
 }
 
@@ -114,7 +133,7 @@
   flex: 1;
   text-align: right;
   font-family: var(--pw-font-mono);
-  font-size: 14px;
+  font-size: clamp(10px, calc(var(--driver-row) * 0.6), 14px);
   font-variant-numeric: tabular-nums;
 }
 
@@ -122,6 +141,29 @@
   width: 22px;
   text-align: right;
   font-family: var(--pw-font-mono);
-  font-size: 12px;
+  font-size: clamp(9px, calc(var(--driver-row) * 0.52), 12px);
   color: var(--pw-text-muted);
+}
+
+/* The tyre pill shrinks with the row too */
+.driver-list .tyre-pill {
+  width: clamp(14px, calc(var(--driver-row) * 0.85), 24px);
+  height: clamp(14px, calc(var(--driver-row) * 0.85), 24px);
+  font-size: clamp(8px, calc(var(--driver-row) * 0.45), 12px);
+}
+
+/* Small screens stack and scroll, so rows go back to a fixed height */
+@media (max-width: 900px) {
+  .driver-list {
+    grid-auto-rows: auto;
+    container-type: normal;
+  }
+
+  .driver-list > li {
+    --driver-row: 40px;
+  }
+
+  .driver-list-item {
+    min-height: var(--driver-row);
+  }
 }

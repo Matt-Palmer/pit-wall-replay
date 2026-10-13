@@ -38,4 +38,7 @@
   --pw-radius: 6px;
   --pw-radius-lg: 8px;
   --pw-target: 44px;
+
+  /* Layout */
+  --pw-app-header-height: 70px;
 }

@@ -14,6 +14,39 @@
   vector-effect: non-scaling-stroke;
 }
 
+.track-map__sector {
+  fill: none;
+  stroke-width: 3px;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.track-map__sector--1 { stroke: var(--pw-sector-1); }
+.track-map__sector--2 { stroke: var(--pw-sector-2); }
+.track-map__sector--3 { stroke: var(--pw-sector-3); }
+
+/* Sector key above the map, as in the design */
+.track-map-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 12px;
+  color: var(--pw-text-muted);
+}
+
+.track-map-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.track-map-legend span::before {
+  content: '';
+  width: 10px;
+  height: 3px;
+  background: var(--sector-colour);
+}
+
 .track-map__car circle {
   fill: var(--team-colour);
   stroke: var(--pw-bg);

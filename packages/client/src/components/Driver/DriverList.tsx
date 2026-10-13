@@ -58,9 +58,7 @@ function DriverList({ standings, leaderLap, totalLaps, hoveredDriver, selectedDr
 					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
 				</button>
 			</div>
-			<ul
-				className="driver-list"
-				>
+			<ul className="driver-list" style={{ '--driver-count': standings.length } as React.CSSProperties}>
 				{standings.map((standing) => (
 					<DriverListItem
 							key={standing.driverNumber}

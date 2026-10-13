@@ -48,11 +48,27 @@ export function fastestLapTrack(laps: Lap[], rowsByDriver: Map<number, Location[
       .sort((a, b) => a.t - b.t);
 
     if (samples.length >= MIN_TRACK_POINTS && coversWindow(samples.map((s) => s.t), start, end)) {
-      return { x: samples.map((s) => s.x), y: samples.map((s) => s.y) };
+      return {
+        x: samples.map((s) => s.x),
+        y: samples.map((s) => s.y),
+        sectorStarts: sectorStarts(lap, start, samples.map((s) => s.t)),
+      };
     }
   }
 
-  return { x: [], y: [] };
+  return { x: [], y: [], sectorStarts: [] };
+}
+
+// The first sample index of sectors 2 and 3, found from the lap's sector times
+function sectorStarts(lap: Lap, start: number, times: number[]): number[] {
+  if (lap.duration_sector_1 == null || lap.duration_sector_2 == null) return [];
+
+  const sector2 = start + lap.duration_sector_1 * 1000;
+  const sector3 = sector2 + lap.duration_sector_2 * 1000;
+  const indexes = [sector2, sector3].map((boundary) => times.findIndex((t) => t >= boundary));
+
+  // A boundary past the last sample means the sector times don't fit this lap's samples
+  return indexes.every((i) => i > 0) ? indexes : [];
 }
 
 // Whether sorted sample times leave no hole longer than MAX_TRACK_GAP_MS between start and end
