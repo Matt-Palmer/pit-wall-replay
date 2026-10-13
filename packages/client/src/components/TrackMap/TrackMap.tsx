@@ -14,7 +14,9 @@ type TrackMapProps = {
   // Absolute time in epoch ms
   t: number;
   hoveredDriver: number | null;
+  selectedDriver: number | null;
   onHoverDriver: (driverNumber: number | null) => void;
+  onSelectDriver: (driverNumber: number) => void;
 };
 
 type Car = { driverNumber: number; driver: Driver | undefined; x: number; y: number };
@@ -26,7 +28,7 @@ const CAR_RADIUS_RATIO = 0.012;
 // OpenF1's y axis points up and SVG's points down, so y is negated throughout
 const toPoint = (x: number, y: number): [number, number] => [x, -y];
 
-function TrackMap({ locations, driversMap, stoppedAt, t, hoveredDriver, onHoverDriver }: TrackMapProps) {
+function TrackMap({ locations, driversMap, stoppedAt, t, hoveredDriver, selectedDriver, onHoverDriver, onSelectDriver }: TrackMapProps) {
   const { track } = locations;
 
   const { path, viewBox, radius } = useMemo(() => {
@@ -66,45 +68,80 @@ function TrackMap({ locations, driversMap, stoppedAt, t, hoveredDriver, onHoverD
   }, [locations.cars, t, stoppedAt, driversMap]);
 
   const hoveredCar = cars.find((car) => car.driverNumber === hoveredDriver);
+  const selectedCar = cars.find((car) => car.driverNumber === selectedDriver);
 
   return (
-    <>
-      <svg className="track-map" viewBox={viewBox} role="img" aria-label="Car positions on the circuit">
-        {path && <path className="track-map__track" d={path} />}
+		<>
+			<svg
+				className="track-map"
+				viewBox={viewBox}
+				role="img"
+				aria-label="Car positions on the circuit"
+			>
+				{path && <path className="track-map__track" d={path} />}
 
-        {cars.map((car) => (
-          <g
-            key={car.driverNumber}
-            className="track-map__car"
-            transform={`translate(${car.x} ${car.y})`}
-            style={{ '--team-colour': `#${car.driver?.team_colour ?? 'cccccc'}` } as React.CSSProperties}
-            onPointerEnter={() => onHoverDriver(car.driverNumber)}
-            onPointerLeave={() => onHoverDriver(null)}
-          >
-            <title>{car.driver?.full_name ?? car.driverNumber}</title>
-            <circle r={radius} />
-          </g>
-        ))}
+				{cars.map((car) => (
+					<g
+						key={car.driverNumber}
+						className="track-map__car"
+						transform={`translate(${car.x} ${car.y})`}
+						style={
+							{
+								"--team-colour": `#${car.driver?.team_colour ?? "cccccc"}`,
+							} as React.CSSProperties
+						}
+						onPointerEnter={() => onHoverDriver(car.driverNumber)}
+						onPointerLeave={() => onHoverDriver(null)}
+						onClick={() => onSelectDriver(car.driverNumber)}
+					>
+						<title>{car.driver?.full_name ?? car.driverNumber}</title>
+						<circle r={radius} />
+					</g>
+				))}
 
-        {/* Drawn again on top of the rest; a copy rather than reordering, so the pointer target never moves in the DOM */}
-        {hoveredCar && (
-          <g
-            className="track-map__car track-map__car--highlighted"
-            transform={`translate(${hoveredCar.x} ${hoveredCar.y})`}
-            style={{ '--team-colour': `#${hoveredCar.driver?.team_colour ?? 'cccccc'}` } as React.CSSProperties}
-            aria-hidden="true"
-          >
-            <circle r={radius} />
-            <text x={radius * 2} y={radius * 0.6} fontSize={radius * 2.2}>
-              {hoveredCar.driver?.name_acronym ?? hoveredCar.driverNumber}
-            </text>
-          </g>
-        )}
-      </svg>
+				{/* Drawn again on top of the rest; a copy rather than reordering, so the pointer target never moves in the DOM */}
+				{hoveredCar && (
+					<g
+						className="track-map__car track-map__car--highlighted"
+						transform={`translate(${hoveredCar.x} ${hoveredCar.y})`}
+						style={
+							{
+								"--team-colour": `#${hoveredCar.driver?.team_colour ?? "cccccc"}`,
+							} as React.CSSProperties
+						}
+						aria-hidden="true"
+					>
+						<circle r={radius} />
+						<text x={radius * 2} y={radius * 0.6} fontSize={radius * 2.2}>
+							{hoveredCar.driver?.name_acronym ?? hoveredCar.driverNumber}
+						</text>
+					</g>
+				)}
 
-      {cars.length === 0 && hasMissingCars && <div className="track-map__notice">No location data at this point</div>}
-    </>
-  );
+				{selectedCar && (
+					<g
+						className="track-map__car track-map__car--highlighted"
+						transform={`translate(${selectedCar.x} ${selectedCar.y})`}
+						style={
+							{
+								"--team-colour": `#${selectedCar.driver?.team_colour ?? "cccccc"}`,
+							} as React.CSSProperties
+						}
+						aria-hidden="true"
+					>
+						<circle r={radius} />
+						<text x={radius * 2} y={radius * 0.6} fontSize={radius * 2.2}>
+							{selectedCar.driver?.name_acronym ?? selectedCar.driverNumber}
+						</text>
+					</g>
+				)}
+			</svg>
+
+			{cars.length === 0 && hasMissingCars && (
+				<div className="track-map__notice">No location data at this point</div>
+			)}
+		</>
+	);
 }
 
 export default TrackMap;

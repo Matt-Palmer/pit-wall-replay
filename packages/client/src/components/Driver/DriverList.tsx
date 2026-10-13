@@ -7,7 +7,9 @@ interface DriverListProps {
 	leaderLap: number;
 	totalLaps: number
 	hoveredDriver: number | null;
+	selectedDriver: number | null;
 	onHoverDriver: (driverNumber: number | null) => void;
+	onSelectDriver: (driverNumber: number) => void;
 }
 
 const DISPLAYED_DATA_OPTIONS: Record<string, string> = {
@@ -15,7 +17,7 @@ const DISPLAYED_DATA_OPTIONS: Record<string, string> = {
 	gapToLeader: 'Gap to Leader',
 };
 
-function DriverList({ standings, leaderLap, totalLaps, hoveredDriver, onHoverDriver }: DriverListProps) {
+function DriverList({ standings, leaderLap, totalLaps, hoveredDriver, selectedDriver, onHoverDriver, onSelectDriver }: DriverListProps) {
 	const [displayedData, setDisplayedData] = useState('interval');
 
 	function onNextDisplayedData() {
@@ -65,7 +67,9 @@ function DriverList({ standings, leaderLap, totalLaps, hoveredDriver, onHoverDri
 							row={standing}
 							displayedData={displayedData}
 							highlighted={standing.driverNumber === hoveredDriver}
+							selected={standing.driverNumber === selectedDriver}
 							onHover={onHoverDriver}
+							onSelect={onSelectDriver}
 						/>
 				))}
 			</ul>

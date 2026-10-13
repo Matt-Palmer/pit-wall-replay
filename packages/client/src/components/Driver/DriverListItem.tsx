@@ -11,10 +11,14 @@ type DriverListItemProps = {
 	row: StandingRow;
 	displayedData: string;
 	highlighted: boolean;
+	selected: boolean;
 	onHover: (driverNumber: number | null) => void;
+	onSelect: (driverNumber: number) => void;
 };
 
-function DriverListItem({ row, displayedData, highlighted, onHover }: DriverListItemProps) {
+function DriverListItem({ row, displayedData, highlighted, selected, onHover, onSelect }: DriverListItemProps) {
+
+	const className = ['driver-list-item', highlighted && 'is-highlighted', selected && 'is-selected'].filter(Boolean).join(' ').trim();
 
 	function formatGapOrInterval(value: string | number | null | undefined) {
 		if (row.outAt !== undefined) return "Out";
@@ -25,11 +29,13 @@ function DriverListItem({ row, displayedData, highlighted, onHover }: DriverList
 
   return (
 		<li key={row.driverNumber}>
-			<a
-				href={`/drivers/${row.driverNumber}`}
-				className={highlighted ? "driver-list-item is-highlighted" : "driver-list-item"}
+			<button
+				type="button"
+				className={className}
 				onPointerEnter={() => onHover(row.driverNumber)}
 				onPointerLeave={() => onHover(null)}
+				onClick={() => onSelect(row.driverNumber)}
+				aria-pressed={selected}
 				style={
 					{
 						"--team-colour": `#${row.driver?.team_colour}`,
@@ -55,7 +61,7 @@ function DriverListItem({ row, displayedData, highlighted, onHover }: DriverList
 					{row.compound?.charAt(0)}
 				</span>
 				<span className="driver-list-item__age" title="Tyre age (laps)">{row.tyreAge ?? ''}</span>
-			</a>
+			</button>
 		</li>
 	);
 }

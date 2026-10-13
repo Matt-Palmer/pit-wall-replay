@@ -47,6 +47,7 @@ function Session() {
 	const raceTimeMs = playback.timeMs;
 	const mapTimeMs = scrubMs ?? raceTimeMs;
 	const [hoveredDriver, setHoveredDriver] = useState<number | null>(null);
+	const [selectedDriver, setSelectedDriver] = useState<number | null>(null);
 
 	const driversMap = useMemo(() => new Map(drivers?.map(driver => [driver.driver_number, driver])), [drivers]);
 
@@ -54,6 +55,10 @@ function Session() {
 
 	const leaderLap = timeline ? leaderLapAt(timeline.leaderLapStarts, timeline.start + raceTimeMs) : 0;
 	const totalLaps = timeline?.leaderLapStarts.length || 0;
+
+	function toggleSelectedDriver(driverNumber: number) {
+		setSelectedDriver(prev => (prev === driverNumber ? null : driverNumber));
+	}
 
   return (
 		<div className="session">
@@ -77,7 +82,9 @@ function Session() {
 								leaderLap={leaderLap}
 								totalLaps={totalLaps}
 								hoveredDriver={hoveredDriver}
+								selectedDriver={selectedDriver}
 								onHoverDriver={setHoveredDriver}
+								onSelectDriver={toggleSelectedDriver}
 							/>
 						)
 					)}
@@ -96,7 +103,9 @@ function Session() {
 								stoppedAt={timeline.stoppedAt}
 								t={timeline.start + mapTimeMs}
 								hoveredDriver={hoveredDriver}
+								selectedDriver={selectedDriver}
 								onHoverDriver={setHoveredDriver}
+								onSelectDriver={toggleSelectedDriver}
 							/>
 						)}
 					</div>
@@ -123,6 +132,7 @@ function Session() {
 				</div>
 
 				<div className="session-grid__table1">
+					{selectedDriver !== null && <p>Selected Driver: {selectedDriver}</p>}
 					{/* TODO: wire up to the hovered/selected driver */}
 					<TelemetryPanel />
 				</div>
