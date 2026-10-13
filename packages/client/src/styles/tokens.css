@@ -14,10 +14,11 @@
   --pw-text-on-accent: #0B0E12;
 
   /* Accent (amber) */
-  --pw-accent: #FFB020;
-  --pw-accent-soft: #FFC95C;
-  --pw-accent-bg: #1E1A0E;
-  --pw-accent-border: #3A2F12;
+  --pw-accent: #3FC8FF;
+  --pw-accent-muted: color-mix(in srgb, var(--pw-accent) 40%, transparent);
+  --pw-accent-soft: #60cffb;
+  --pw-accent-bg: #162328;
+  --pw-accent-border: #0f2d39;
   --pw-accent-glow: rgb(255 176 32 / 0.25);
 
   /* Sectors and status */
