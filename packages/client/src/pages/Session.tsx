@@ -123,8 +123,7 @@ function Session() {
 
 					<div className="session-grid__side">
 						<div className="session-grid__telemetry">
-							{selectedDriver !== null && <p>Selected Driver: {selectedDriver}</p>}
-							{/* TODO: wire up to the hovered/selected driver */}
+							{/* TODO: wire up to the selected driver */}
 							<TelemetryPanel />
 						</div>
 
