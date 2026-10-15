@@ -1,6 +1,6 @@
 import type { StandingRow } from "../../lib/timeline";
 import { getTyreColour } from "../../lib/helpers";
-
+import { formatGapOrInterval } from "../../lib/helpers";
 
 
 type DriverListItemProps = {
@@ -16,12 +16,7 @@ function DriverListItem({ row, displayedData, highlighted, selected, onHover, on
 
 	const className = ['driver-list-item', highlighted && 'is-highlighted', selected && 'is-selected'].filter(Boolean).join(' ').trim();
 
-	function formatGapOrInterval(value: string | number | null | undefined) {
-		if (row.outAt !== undefined) return "Out";
-		if (value == null || value === 0) return "-";
-		if (typeof value === 'string') return value;
-		return `+${value.toFixed(3)}`;
-	}
+	
 
   return (
 		<li key={row.driverNumber}>
@@ -45,8 +40,8 @@ function DriverListItem({ row, displayedData, highlighted, selected, onHover, on
 				</span>
 
 				<span className="driver-list-item__gap">
-					{displayedData === "gapToLeader" && formatGapOrInterval(row.gapToLeader)}
-					{displayedData === "interval" && formatGapOrInterval(row.interval)}
+					{displayedData === "gapToLeader" && formatGapOrInterval(row.gapToLeader, row.outAt)}
+					{displayedData === "interval" && formatGapOrInterval(row.interval, row.outAt)}
 				</span>
 
 				<span

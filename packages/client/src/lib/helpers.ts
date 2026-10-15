@@ -33,3 +33,16 @@ export function getTyreColour(compound: TyreCompound | undefined) {
 	if (!compound) return "#cccccc";
 	return TYRE_COMPOUND_COLOURS[compound];
 }
+
+export function formatGapOrInterval(value: string | number | null | undefined, outAt?: number) {
+	if (outAt !== undefined) return "Out";
+	if (value == null || value === 0) return "-";
+	if (typeof value === "string") return value;
+	return `+${value.toFixed(3)}`;
+}
+
+export function formatTyreAge(tyreAge: number | undefined) {
+	if (!tyreAge) return "-";
+	if (tyreAge === 1) return "1 lap old";
+	return `${tyreAge} laps old`;
+}

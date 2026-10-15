@@ -6,6 +6,19 @@
   padding: 16px;
 }
 
+.telemetry__header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.telemetry__position {
+  font-size: 30px;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--pw-text-muted);
+}
+
 .telemetry__driver {
   display: flex;
   align-items: center;
@@ -13,6 +26,7 @@
 }
 
 .telemetry__team {
+  display: inline-block;
   width: 6px;
   height: 40px;
   border-radius: 3px;
@@ -30,10 +44,6 @@
 .telemetry__meta {
   font-size: 13px;
   color: var(--pw-text-muted);
-}
-
-.telemetry__title {
-  margin-left: auto;
 }
 
 .telemetry__stats {
@@ -174,4 +184,14 @@
   gap: 10px;
   font-size: 13px;
   color: var(--pw-text-muted);
+}
+
+.telemetry__tyre-data {
+  font-size: 13px;
+  color: var(--pw-text-muted);
+}
+
+.telemetry__tyre-data span:not(:last-child)::after {
+  content: "|";
+  margin: 0 4px;
 }
