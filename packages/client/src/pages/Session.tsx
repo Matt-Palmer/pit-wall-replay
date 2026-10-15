@@ -46,12 +46,16 @@ function Session() {
 	});
 	const raceTimeMs = playback.timeMs;
 	const mapTimeMs = scrubMs ?? raceTimeMs;
+
 	const [hoveredDriver, setHoveredDriver] = useState<number | null>(null);
 	const [selectedDriver, setSelectedDriver] = useState<number | null>(null);
 
 	const driversMap = useMemo(() => new Map(drivers?.map(driver => [driver.driver_number, driver])), [drivers]);
 
 	const standings = useMemo(() => (timeline ? standingAt(timeline, driversMap, timeline.start + raceTimeMs) : []), [timeline, driversMap, raceTimeMs]);
+	const selectedRow = selectedDriver !== null ? standings.find(row => row.driverNumber === selectedDriver) : null;
+
+	console.log(selectedRow);
 
 	const leaderLap = timeline ? leaderLapAt(timeline.leaderLapStarts, timeline.start + raceTimeMs) : 0;
 	const totalLaps = timeline?.leaderLapStarts.length || 0;
