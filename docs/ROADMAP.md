@@ -157,11 +157,11 @@ Hovering already works: `Session.tsx` holds `hoveredDriver` and passes it down t
 ### 1.3 Track map: click to select
 
 - [x] **a.** Add `selectedDriver` and `onSelectDriver` props to `TrackMap`, and pass them from `Session.tsx`
-- [ ] **b.** Add `onClick` to each car's `<g>`. Add `cursor: pointer` for `.track-map__car` in `trackMap.css`. *Done when:* clicking a car on the map highlights its row in the list
-- [ ] **c.** Right now only `hoveredCar` gets drawn on top with its name label, so the selected car loses its label as soon as the mouse leaves. Change it so the selected car always gets the label, and the hovered car does too. Watch out for the case where they're the same driver: don't draw it twice
-- [ ] **d.** Run the app: select from the list, move the mouse away, and check the map label stays. Select from the map and check the list row
-- [ ] **e.** Edge case: select a driver who retires (pick a race with a DNF) and play past the point where they stop. The car disappears from the map. Check nothing breaks and the list row still shows as selected
-- [ ] **f.** Typecheck, lint, commit
+- [x] **b.** Add `onClick` to each car's `<g>`. Add `cursor: pointer` for `.track-map__car` in `trackMap.css`. *Done when:* clicking a car on the map highlights its row in the list
+- [x] **c.** Right now only `hoveredCar` gets drawn on top with its name label, so the selected car loses its label as soon as the mouse leaves. Change it so the selected car always gets the label, and the hovered car does too. Watch out for the case where they're the same driver: don't draw it twice
+- [x] **d.** Run the app: select from the list, move the mouse away, and check the map label stays. Select from the map and check the list row
+- [x] **e.** Edge case: select a driver who retires (pick a race with a DNF) and play past the point where they stop. The car disappears from the map. Check nothing breaks and the list row still shows as selected
+- [x] **f.** Typecheck, lint, commit
 
 ### 1.4 Tidy up
 
