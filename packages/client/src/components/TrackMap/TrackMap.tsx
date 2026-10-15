@@ -114,7 +114,7 @@ function TrackMap({ locations, driversMap, stoppedAt, t, hoveredDriver, selected
 				))}
 
 				{/* Drawn again on top of the rest; a copy rather than reordering, so the pointer target never moves in the DOM */}
-				{hoveredCar && (
+				{hoveredCar && hoveredCar !== selectedCar && (
 					<g
 						className="track-map__car track-map__car--highlighted"
 						transform={`translate(${hoveredCar.x} ${hoveredCar.y})`}

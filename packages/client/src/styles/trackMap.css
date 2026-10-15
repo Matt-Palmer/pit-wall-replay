@@ -55,6 +55,7 @@
   transform-box: fill-box;
   transform-origin: center;
   transition: transform 120ms;
+  cursor: pointer;
 }
 
 .track-map__car--highlighted {

@@ -6,7 +6,7 @@ export function useSession(sessionKey: string | undefined) {
     queryKey: ['session', sessionKey],
     queryFn: sessionKey ? ({ signal }) => fetchSession(sessionKey, signal) : skipToken,
     enabled: !!sessionKey,
-    staleTime: Infinity
+    staleTime: Infinity,
   });
 
   return { session: session?.[0], isLoading, isPending, error };
