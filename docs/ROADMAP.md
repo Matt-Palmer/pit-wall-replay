@@ -2,7 +2,7 @@
 
 Status as of 2026-10-15. Tick boxes as tasks are completed.
 
-**Current step:** Phase 2, task 2.1a (Telemetry, part A).
+**Current step:** Phase 2, task 2.4a (stop count).
 
 ---
 
@@ -190,16 +190,16 @@ Most of what's needed is already in the selected driver's `StandingRow`: driver,
 
 ### 2.2 Position and gap (one formatter, used in two places)
 
-- [ ] **a.** Read `formatGapOrInterval` in `DriverListItem.tsx`. It reads `row.outAt` from the surrounding scope, which is why it can't simply be moved somewhere else yet
-- [ ] **b.** Move it to `lib/helpers.ts` as an exported function that takes everything it needs as parameters (e.g. `formatGap(value, isOut)`). Update `DriverListItem` to use it. *Done when:* the driver list looks exactly as it did before
-- [ ] **c.** Add a few tests for it in a new `lib/helpers.test.ts`: a number, a string such as `"+1 LAP"`, `null`, `0`, and a driver who is out
-- [ ] **d.** Use it in the panel for `P{position} · {gap}`. Decide what the leader should show: right now `0` gives `-`. Would "Leader" read better here? If so, should the list change too?
+- [x] **a.** Read `formatGapOrInterval` in `DriverListItem.tsx`. It reads `row.outAt` from the surrounding scope, which is why it can't simply be moved somewhere else yet
+- [x] **b.** Move it to `lib/helpers.ts` as an exported function that takes everything it needs as parameters (e.g. `formatGap(value, isOut)`). Update `DriverListItem` to use it. *Done when:* the driver list looks exactly as it did before
+- [x] **c.** Add a few tests for it in a new `lib/helpers.test.ts`: a number, a string such as `"+1 LAP"`, `null`, `0`, and a driver who is out
+- [x] **d.** Use it in the panel for `P{position} · {gap}`. Decide what the leader should show: right now `0` gives `-`. Would "Leader" read better here? If so, should the list change too? *Decision:* keep `-`; position moved to its own large `P1` in the header
 
 ### 2.3 Tyre
 
-- [ ] **a.** Replace the compound pill with `row.compound`, using `TYRE_COMPOUND_COLOURS` from `constants/compounds.ts` (the same lookup as `DriverListItem`)
-- [ ] **b.** `row.compound` is `'MEDIUM'`, but the panel shows `Medium`. Write the conversion. Then handle `undefined` compound and `undefined` tyre age without showing "undefined laps old"
-- [ ] **c.** "1 laps old" vs "1 lap old": handle the singular. Leave the stop count hardcoded for now
+- [x] **a.** Replace the compound pill with `row.compound`, using `TYRE_COMPOUND_COLOURS` from `constants/compounds.ts` (the same lookup as `DriverListItem`)
+- [x] **b.** `row.compound` is `'MEDIUM'`, but the panel shows `Medium`. Write the conversion. Then handle `undefined` compound and `undefined` tyre age without showing "undefined laps old". *Done as* `formatTyreAge` in `helpers.ts`, with tests; a tyre age of `0` also shows `-`
+- [x] **c.** "1 laps old" vs "1 lap old": handle the singular. Leave the stop count hardcoded for now
 
 ### 2.4 Stop count (test first)
 
