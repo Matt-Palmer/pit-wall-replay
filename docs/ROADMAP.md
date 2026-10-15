@@ -1,8 +1,8 @@
 # Pit Wall Replay: Roadmap
 
-Status as of 2026-10-11. Tick boxes as tasks are completed.
+Status as of 2026-10-15. Tick boxes as tasks are completed.
 
-**Current step:** 1.3b, add `cursor: pointer` for `.track-map__car` (the `onClick` is already in), then 1.3c.
+**Current step:** Phase 1 done. Next: break Phase 2 down into tasks, starting with Telemetry, part A.
 
 ---
 
@@ -20,6 +20,7 @@ Status as of 2026-10-11. Tick boxes as tasks are completed.
 - `useSessionTimeline` merges all the data streams into per-driver timelines and works out who stopped running (DNS/DNF), including a fallback for when there's no result yet
 - Playback engine: play/pause, 2×/5×/10×, hold to fast-forward or rewind, jump to next or previous lap, keyboard shortcuts. Tests pass (12)
 - Live driver standings (gap or interval, tyre compound and age), track map with interpolated cars, position-per-lap D3 chart, scrubber, session header, loading skeletons
+- Driver selection: click a driver in the list or a car on the map to select them (click again to clear); the selected car keeps its map label
 
 **Client: race list page** (`/`)
 - Season picker, race cards, fetching a race's drivers early on hover
@@ -28,7 +29,7 @@ Status as of 2026-10-11. Tick boxes as tasks are completed.
 
 | Component | State | What it needs |
 |---|---|---|
-| `TelemetryPanel` | Hardcoded NOR data | A selected driver, plus OpenF1 `car_data` (speed, gear, DRS, throttle, brake) and sector times from laps |
+| `TelemetryPanel` | Hardcoded NOR data | `selectedDriver` is ready in `Session.tsx`; still needs OpenF1 `car_data` (speed, gear, DRS, throttle, brake) and sector times from laps |
 | `RaceControl` | 4 hardcoded messages | A new `/race_control` route and schema, filtered to the current replay time |
 | `ContinueWatching` | Hardcoded "British GP, lap 34" | Save the last session and its playback position to localStorage |
 | `RaceFilters` | Buttons and search box do nothing | Filter state in `App.tsx`. Sprint filtering needs sprint session data |
@@ -41,7 +42,7 @@ Status as of 2026-10-11. Tick boxes as tasks are completed.
 
 1. ~~**Client typecheck fails**: unused `isMeetingLoading` in `Session.tsx`~~ (fixed in e6dc0f9)
 2. ~~**Unnecessary recalculation in `useSessionTimeline.ts`**: if the result query fails, `result = []` is a new array every render, so the timeline is rebuilt every frame during playback~~ (fixed in e812cf0)
-3. **Broken driver links**: `DriverListItem` links to `/drivers/N`, which doesn't match `/race/:sessionKey/driver/:driverNumber`. It's also a plain `<a>`, so clicking it reloads the page and loses playback position
+3. ~~**Broken driver links**: `DriverListItem` links to `/drivers/N`, which doesn't match `/race/:sessionKey/driver/:driverNumber`. It's also a plain `<a>`, so clicking it reloads the page and loses playback position~~ (fixed in 8870426; the row is now a selection button, and the driver page link returns in Phase 4)
 4. ~~**Conflicting tyre colours**: `DriverListItem` has its own colour switch, which doesn't match the unused `constants/compounds.ts`~~ (fixed in 9339271)
 5. ~~**Mixed import styles**: some files use `@pitwall/shared`, others use relative `../../../shared/src/...`~~ (fixed in 334a910 and 9224486)
 6. **Bare error and 404 states**: plain `<div>Error: …</div>` and a plain-text not-found page
@@ -55,7 +56,7 @@ Status as of 2026-10-11. Tick boxes as tasks are completed.
 ### Phase 0: Fix what's broken ✅
 Small, mechanical work so the build is green and the code is consistent. Breakdown below.
 
-### Phase 1: Driver selection
+### Phase 1: Driver selection ✅
 Needed by the telemetry panel, the driver page and the map. Breakdown below.
 - Add a selected-driver state to `Session.tsx`: click a driver in the list or on the map to select them; hovering stays a temporary highlight
 - Fix the driver link (bug 3) at the same time
@@ -167,6 +168,6 @@ Hovering already works: `Session.tsx` holds `hoveredDriver` and passes it down t
 
 - [x] **a.** Remove the temporary `{selectedDriver}` from 1.1c
 - [x] **b.** Update the `TelemetryPanel` TODO comment in `Session.tsx` to say it will use `selectedDriver` (Phase 2)
-- [x] **c.** *(Optional)* Press Escape to clear the selection. Think about where the listener belongs: `usePlayback` handles playback keys, and selection isn't playback
+- [ ] **c.** *(Optional, skipped)* Press Escape to clear the selection. Think about where the listener belongs: `usePlayback` handles playback keys, and selection isn't playback
 - [x] **d.** Strike through bug 3 above and tick Phase 1
 - [x] **e.** Typecheck, lint, tests, commit
