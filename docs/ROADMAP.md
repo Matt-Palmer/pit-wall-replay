@@ -2,7 +2,7 @@
 
 Status as of 2026-10-15. Tick boxes as tasks are completed.
 
-**Current step:** Phase 1 done. Next: break Phase 2 down into tasks, starting with Telemetry, part A.
+**Current step:** Phase 2, task 2.1a (Telemetry, part A).
 
 ---
 
@@ -61,7 +61,8 @@ Needed by the telemetry panel, the driver page and the map. Breakdown below.
 - Add a selected-driver state to `Session.tsx`: click a driver in the list or on the map to select them; hovering stays a temporary highlight
 - Fix the driver link (bug 3) at the same time
 
-### Phase 2: Fill in the session page panels
+### Phase 2: Fill in the session page panels (in progress)
+Telemetry part A is broken down below. The other items get broken down once part A is done.
 - **Telemetry, part A**, using data already loaded: position, gap, last and best lap, sectors, tyre and stop count for the selected driver
 - **Race control**: server route and schema, then show messages up to the current time. Adding the pit stop route alongside it lets pit stops appear as messages too
 - **Telemetry, part B**: speed, gear, throttle, brake and DRS from `car_data`. Heaviest data, so fetch it for one driver at a time and cache it on the server like locations
@@ -171,3 +172,66 @@ Hovering already works: `Session.tsx` holds `hoveredDriver` and passes it down t
 - [ ] **c.** *(Optional, skipped)* Press Escape to clear the selection. Think about where the listener belongs: `usePlayback` handles playback keys, and selection isn't playback
 - [x] **d.** Strike through bug 3 above and tick Phase 1
 - [x] **e.** Typecheck, lint, tests, commit
+
+---
+
+## Phase 2 breakdown: Telemetry, part A
+
+The goal is to make `TelemetryPanel` show the selected driver using data that's already loaded. Speed, gear, DRS and pedals stay as placeholders until part B.
+
+Most of what's needed is already in the selected driver's `StandingRow`: driver, position, gap, compound and tyre age. What's still missing is lap and sector times and the stop count, and those are pure functions you can test first.
+
+### 2.1 Pass the selected driver in
+
+- [x] **a.** In `Session.tsx`, just below `standings`, add one line: `const selectedRow = standings.find(...)`, matching each row's `driverNumber` against `selectedDriver`. **No new state:** keep storing only the number and work out the row on each render. If you stored the row object, it would be a snapshot from the moment of the click and would never update during playback. The result is `StandingRow | undefined` (undefined when nothing is selected). Questions: why `standings` rather than `timeline`? (Which one already reflects `raceTimeMs`?) Is `useMemo` worth it for a `.find()` over 20 rows?
+- [x] **b.** Give `TelemetryPanel` a `row: StandingRow | undefined` prop and pass it in. Import the type with `import type`
+- [x] **c.** Empty state: when `row` is undefined, show a short message such as "Select a driver from the list or map" instead of the panel body. Keep the `<section>` and the title so the layout doesn't jump. *Done when:* the panel shows the prompt on load, and clicking a driver brings back the (still hardcoded) panel
+- [x] **d.** Replace `DRIVER.code` and `DRIVER.teamColour` with values from `row.driver`. Watch out: OpenF1 sends `team_colour` without the `#`, so check how `DriverListItem` handles it. Also think about what to show if `row.driver` is undefined
+
+### 2.2 Position and gap (one formatter, used in two places)
+
+- [ ] **a.** Read `formatGapOrInterval` in `DriverListItem.tsx`. It reads `row.outAt` from the surrounding scope, which is why it can't simply be moved somewhere else yet
+- [ ] **b.** Move it to `lib/helpers.ts` as an exported function that takes everything it needs as parameters (e.g. `formatGap(value, isOut)`). Update `DriverListItem` to use it. *Done when:* the driver list looks exactly as it did before
+- [ ] **c.** Add a few tests for it in a new `lib/helpers.test.ts`: a number, a string such as `"+1 LAP"`, `null`, `0`, and a driver who is out
+- [ ] **d.** Use it in the panel for `P{position} · {gap}`. Decide what the leader should show: right now `0` gives `-`. Would "Leader" read better here? If so, should the list change too?
+
+### 2.3 Tyre
+
+- [ ] **a.** Replace the compound pill with `row.compound`, using `TYRE_COMPOUND_COLOURS` from `constants/compounds.ts` (the same lookup as `DriverListItem`)
+- [ ] **b.** `row.compound` is `'MEDIUM'`, but the panel shows `Medium`. Write the conversion. Then handle `undefined` compound and `undefined` tyre age without showing "undefined laps old"
+- [ ] **c.** "1 laps old" vs "1 lap old": handle the singular. Leave the stop count hardcoded for now
+
+### 2.4 Stop count (test first)
+
+A stop is when a new stint starts, so the number of stops at a given lap is the number of stints started by that lap, minus one.
+
+- [ ] **a.** Add `stops: number` to `StandingRow` and work out the value in `standingAt`, next to the existing stint lookup. Decide what it should be before lap 1 (when `lap` is undefined)
+- [ ] **b.** Before you implement it, write a test in `timeline.test.ts` that calls `standingAt` with a small fake timeline: one driver, two stints (laps 1–20 and 21–50), checked at lap 10 and at lap 30. You'll need to build a minimal `SessionTimeline` and `driversMap`. Run it and watch it fail
+- [ ] **c.** Implement it until the test passes. Add a second case: a stint whose `lap_end` is `null` (the stint the driver is currently on in a live session)
+- [ ] **d.** Show it in the panel: "No stops", "1 stop", "2 stops"
+
+### 2.5 Lap and sector times (test first)
+
+This is the main task of part A. The rule to stick to is **no spoilers**: at replay time `t`, only show laps the driver has already *finished*.
+
+- [ ] **a.** Decide when a lap counts as finished at time `t`. A lap has `t` (its start) and `lap_duration` in seconds. Write the condition down. What about a lap whose `lap_duration` is `null`?
+- [ ] **b.** Write tests first for a new function in `lib/timeline.ts`, such as `lapTimesAt(laps: Timed<Lap>[], t: number): { last: Lap | undefined; best: Lap | undefined }`. Cases to cover:
+  - before the first lap is finished, both are `undefined`
+  - partway through lap 3, `last` is lap 2, not lap 3
+  - `best` only looks at finished laps (a faster lap later in the race mustn't show up early)
+  - a finished lap with `lap_duration: null` is skipped for `best`
+  You'll need `Timed` exported from `useSessionTimeline.ts`, or you can type the parameter as `DriverStreams['laps']`
+- [ ] **c.** Implement it. *Done when:* the tests pass. Tip: `laps` is sorted by `t`, but a simple loop is fine here (a driver has about 60 laps), so don't reach for binary search unless you want the practice
+- [ ] **d.** Add a `formatLapTime(seconds: number | null | undefined)` helper with tests: `87.357` → `1:27.357`, `28.39` → `28.390`, `null` → `–`. Hint: `padStart` for the seconds when there's a minute part
+- [ ] **e.** Call `lapTimesAt` in `Session.tsx` for the selected driver (you'll need `timeline.byDriver.get(selectedDriver)`) and pass the result to the panel as a prop. Then think about whether it belongs in `StandingRow` instead. It would get worked out for all 20 drivers every frame. Does that matter?
+- [ ] **f.** Fill in the "Last" row: S1, S2, S3 and time
+- [ ] **g.** Fill in the "Best" row's time. Then decide: show the best lap's sectors, or keep the dashes? (Note: the best lap's sectors aren't the same as the best sectors, so pick one and be clear which one it is.)
+- [ ] **h.** *(Stretch)* `is-personal-best` on a sector of the last lap when it's the driver's fastest of that sector so far. This is a small extension of `lapTimesAt`, so add a test for it first
+
+### 2.6 Placeholders and tidy-up
+
+- [x] **a.** Speed, gear, DRS, throttle and brake are still `DRIVER.*`. Replace them with placeholders. Keep the markup, because part B fills it in. *Decision:* speed and gear show dashes; the full pedal bars and always-open DRS are accepted until part B
+- [ ] **b.** Delete the `DRIVER` constant. *Done when:* typecheck passes with it gone
+- [ ] **c.** Update the TODO comment above `<TelemetryPanel />` in `Session.tsx` so it only mentions part B (`car_data`)
+- [ ] **d.** Run the app. Select a driver and scrub through the race: lap times should change as laps finish, and the stop count and tyre should change at a pit stop. Try a driver who retires, and scrubbing back to before lap 1
+- [ ] **e.** Typecheck, lint, tests, commit (one commit per numbered task is fine if you'd rather)
