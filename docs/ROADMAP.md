@@ -165,8 +165,8 @@ Hovering already works: `Session.tsx` holds `hoveredDriver` and passes it down t
 
 ### 1.4 Tidy up
 
-- [ ] **a.** Remove the temporary `{selectedDriver}` from 1.1c
-- [ ] **b.** Update the `TelemetryPanel` TODO comment in `Session.tsx` to say it will use `selectedDriver` (Phase 2)
-- [ ] **c.** *(Optional)* Press Escape to clear the selection. Think about where the listener belongs: `usePlayback` handles playback keys, and selection isn't playback
-- [ ] **d.** Strike through bug 3 above and tick Phase 1
-- [ ] **e.** Typecheck, lint, tests, commit
+- [x] **a.** Remove the temporary `{selectedDriver}` from 1.1c
+- [x] **b.** Update the `TelemetryPanel` TODO comment in `Session.tsx` to say it will use `selectedDriver` (Phase 2)
+- [x] **c.** *(Optional)* Press Escape to clear the selection. Think about where the listener belongs: `usePlayback` handles playback keys, and selection isn't playback
+- [x] **d.** Strike through bug 3 above and tick Phase 1
+- [x] **e.** Typecheck, lint, tests, commit
