@@ -53,9 +53,7 @@ function Session() {
 	const driversMap = useMemo(() => new Map(drivers?.map(driver => [driver.driver_number, driver])), [drivers]);
 
 	const standings = useMemo(() => (timeline ? standingAt(timeline, driversMap, timeline.start + raceTimeMs) : []), [timeline, driversMap, raceTimeMs]);
-	const selectedRow = selectedDriver !== null ? standings.find(row => row.driverNumber === selectedDriver) : null;
-
-	console.log(selectedRow);
+	const selectedRow = standings.find(row => row.driverNumber === selectedDriver);
 
 	const leaderLap = timeline ? leaderLapAt(timeline.leaderLapStarts, timeline.start + raceTimeMs) : 0;
 	const totalLaps = timeline?.leaderLapStarts.length || 0;
@@ -126,10 +124,12 @@ function Session() {
 					</div>
 
 					<div className="session-grid__side">
-						<div className="session-grid__telemetry">
-							{/* TODO: wire up to the selected driver */}
-							<TelemetryPanel />
-						</div>
+						{selectedRow && (
+							<div className="session-grid__telemetry">
+								{/* TODO: wire up to the selected driver */}
+								<TelemetryPanel row={selectedRow} />
+							</div>
+						)}
 
 						<div className="session-grid__control">
 							{/* TODO: wire up to race control messages */}

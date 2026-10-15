@@ -1,11 +1,7 @@
 import type { StandingRow } from "../../lib/timeline";
-import { TYRE_COMPOUND_COLOURS } from "../../constants/compounds";
-import type { TyreCompound } from "@pitwall/shared";
+import { getTyreColour } from "../../lib/helpers";
 
-function setTyreCompoundColour(compound: TyreCompound | undefined) {
-	if (!compound) return '#cccccc';
-	return TYRE_COMPOUND_COLOURS[compound];
-}
+
 
 type DriverListItemProps = {
 	row: StandingRow;
@@ -55,7 +51,7 @@ function DriverListItem({ row, displayedData, highlighted, selected, onHover, on
 
 				<span
 					className="tyre-pill"
-					style={{ "--tyre-colour": setTyreCompoundColour(row.compound) } as React.CSSProperties}
+					style={{ "--tyre-colour": getTyreColour(row.compound) } as React.CSSProperties}
 					title={row.compound}
 				>
 					{row.compound?.charAt(0)}
