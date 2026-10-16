@@ -46,3 +46,9 @@ export function formatTyreAge(tyreAge: number | undefined) {
 	if (tyreAge === 1) return "1 lap old";
 	return `${tyreAge} laps old`;
 }
+
+export function formatStops(stintNumber: number) {
+	console.log(stintNumber);
+	if (stintNumber === 0) return '0 stops';
+	return `${stintNumber} stop${stintNumber === 1 ? '' : 's'}`;
+}

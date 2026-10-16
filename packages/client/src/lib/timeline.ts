@@ -12,6 +12,7 @@ export type StandingRow = {
   tyreAge: number | undefined;
   // Set once the driver has stopped running, to the time they stopped
   outAt: number | undefined;
+  stops: number;
 }
 
 export type LapPosition = {
@@ -122,6 +123,7 @@ export function standingAt(timeline: SessionTimeline, driversMap: Map<number, Dr
       compound: stint?.compound ?? undefined,
       tyreAge: stint && lap !== undefined ? stint.tyre_age_at_start + (lap - (stint.lap_start ?? lap)) : stint?.tyre_age_at_start,
       outAt: stoppedAt !== undefined && t >= stoppedAt ? stoppedAt : undefined,
+      stops: stint !== undefined ? stint.stint_number - 1 : 0,
     });
 
   }

@@ -1,6 +1,6 @@
 import './telemetry-panel.css';
 
-import { getTyreColour, formatGapOrInterval, formatTyreAge } from '../../lib/helpers';
+import { getTyreColour, formatGapOrInterval, formatTyreAge, formatStops } from '../../lib/helpers';
 import type { StandingRow } from '../../lib/timeline';
 
 interface TelemetryPanelProps {
@@ -124,6 +124,7 @@ export function TelemetryPanel({ row }: TelemetryPanelProps) {
 						</span>
 					}
 					{row.tyreAge !== undefined && <span>{formatTyreAge(row.tyreAge)}</span>}
+					<span>{formatStops(row.stops)}</span>
 				</span>
 			</p>
 		</section>

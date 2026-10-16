@@ -1,5 +1,25 @@
 import { describe, expect, it } from 'vitest';
-import { carPositionAt } from './timeline';
+import { carPositionAt, standingAt } from "./timeline";
+import type { DriverStreams, SessionTimeline } from '../hooks/useSessionTimeline';
+import type { Stint } from "@pitwall/shared";
+
+const lapsUpTo = (count: number) => {
+  return Array.from({ length: count }, (_, i) => ({lap_number: i + 1, t: (i + 1) * 1000})) as DriverStreams['laps'];
+};
+
+const stint = (stint_number: number, lap_start: number, lap_end: number | null) => ({ stint_number, lap_start, lap_end, compound: 'MEDIUM', tyre_age_at_start: 0 }) as Stint;
+
+function timelineWith(streams: Partial<DriverStreams>): SessionTimeline {
+  return {
+    byDriver: new Map([
+      [1, { positions: [], intervals: [], laps: [], stints: [], ...streams }],
+    ]),
+    start: 0,
+    end: 0,
+    leaderLapStarts: [],
+    stoppedAt: new Map(),
+  };
+}
 
 const car = {
   t: [1000, 2000, 10000],
@@ -47,4 +67,31 @@ describe('carPositionAt', () => {
   it('returns undefined for a car with no samples', () => {
     expect(carPositionAt({ t: [], x: [], y: [] }, 1000)).toBeUndefined();
   });
+});
+
+describe("standingAt stops", () => {
+  const timeline = timelineWith({
+		laps: lapsUpTo(50),
+		stints: [stint(1, 1, 20), stint(2, 21, 50)],
+	});
+
+	it("should correctly indicate when a driver has stopped 0 times", () => {
+		const standing = standingAt(timeline, new Map(), 10_500);
+		expect(standing[0]?.stops).toBe(0);
+	});
+
+	it("should correctly indicate when a driver has stopped 1 time", () => {
+		const standing = standingAt(timeline, new Map(), 30_500);
+		expect(standing[0]?.stops).toBe(1);
+	});
+
+  it("counts the current stint when it has no end lap yet", () => {
+		const liveTimeline = timelineWith({
+			laps: lapsUpTo(50),
+			stints: [stint(1, 1, 20), stint(2, 21, null)],
+		});
+
+		const standing = standingAt(liveTimeline, new Map(), 30_500);
+		expect(standing[0]?.stops).toBe(1);
+	});
 });

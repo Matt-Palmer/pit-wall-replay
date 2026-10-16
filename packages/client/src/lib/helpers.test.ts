@@ -1,5 +1,5 @@
 import { it, describe, expect } from 'vitest';
-import { getTyreColour, formatGapOrInterval, formatTyreAge } from './helpers';
+import { getTyreColour, formatGapOrInterval, formatTyreAge, formatStops } from './helpers';
 import type { TyreCompound } from '@pitwall/shared';
 
 describe('getTyreColour', () => {
@@ -55,5 +55,19 @@ describe('formatTyreAge', () => {
 
 	it('should return the correct string for tyreAge greater than 1', () => {
 		expect(formatTyreAge(3)).toBe('3 laps old');
+	});
+});
+
+describe("formatStops", () => {
+	it('says "No stops" for 0', () => {
+		expect(formatStops(0)).toBe("0 stops");
+	});
+
+	it('says "1 stop" for 1', () => {
+		expect(formatStops(1)).toBe("1 stop");
+	});
+
+	it('says "2 stops" for 2', () => {
+		expect(formatStops(2)).toBe("2 stops");
 	});
 });
