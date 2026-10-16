@@ -2,7 +2,6 @@ import type { StandingRow } from "../../lib/timeline";
 import { getTyreColour } from "../../lib/helpers";
 import { formatGapOrInterval } from "../../lib/helpers";
 
-
 type DriverListItemProps = {
 	row: StandingRow;
 	displayedData: string;
@@ -14,9 +13,7 @@ type DriverListItemProps = {
 
 function DriverListItem({ row, displayedData, highlighted, selected, onHover, onSelect }: DriverListItemProps) {
 
-	const className = ['driver-list-item', highlighted && 'is-highlighted', selected && 'is-selected'].filter(Boolean).join(' ').trim();
-
-	
+	const className = `driver-list-item${highlighted ? ' is-highlighted' : ''}${selected ? ' is-selected' : ''}`;
 
   return (
 		<li key={row.driverNumber}>

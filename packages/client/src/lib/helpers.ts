@@ -48,7 +48,6 @@ export function formatTyreAge(tyreAge: number | undefined) {
 }
 
 export function formatStops(stintNumber: number) {
-	console.log(stintNumber);
 	if (stintNumber === 0) return '0 stops';
 	return `${stintNumber} stop${stintNumber === 1 ? '' : 's'}`;
 }
